@@ -29,7 +29,7 @@ jobs:
         node: [ 22 ]
     steps:
       - name: Fetch Codebase
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -50,19 +50,12 @@ jobs:
       - name: Install LLVM on Windows
         if: startsWith(matrix.os, 'windows')
         run: |
-          $LLVM_VERSION = "${{ env.LLVM_VERSION }}"
-          $LLVM_INSTALLER = "LLVM-$LLVM_VERSION-win64.exe"
-          $LLVM_INSTALL_DIR = "$pwd\\llvm-install"
-          Invoke-WebRequest -Uri "https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/$LLVM_INSTALLER" -OutFile $LLVM_INSTALLER
-          Start-Process -FilePath ".\\$LLVM_INSTALLER" -ArgumentList "/S", "/D=$LLVM_INSTALL_DIR" -Wait
-          $LLVM_CMAKE_DIR = "$LLVM_INSTALL_DIR\\lib\\cmake\\llvm"
+          choco install llvm --version=${{ env.LLVM_VERSION }} --allow-downgrade -y
+          $LLVM_CMAKE_DIR = "C:/Program Files/LLVM/lib/cmake/llvm"
           if (-not (Test-Path $LLVM_CMAKE_DIR)) {
             Write-Error "LLVM CMake directory not found: $LLVM_CMAKE_DIR"
             exit 1
           }
-          # Use forward slashes to avoid escaping issues when passing as -D value.
-          $LLVM_CMAKE_DIR = $LLVM_CMAKE_DIR -replace '\\', '/'
-          # Persist the CMake package path for an explicit cmake-js --CD flag.
           "LLVM_CMAKE_DIR=$LLVM_CMAKE_DIR" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Install Dependencies
         run: npm install --ignore-scripts
@@ -99,7 +92,7 @@ jobs:
             node: 20
     steps:
       - name: Fetch Codebase
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -120,19 +113,12 @@ jobs:
       - name: Install LLVM on Windows
         if: startsWith(matrix.os, 'windows')
         run: |
-          $LLVM_VERSION = "${{ env.LLVM_VERSION }}"
-          $LLVM_INSTALLER = "LLVM-$LLVM_VERSION-win64.exe"
-          $LLVM_INSTALL_DIR = "$pwd\\llvm-install"
-          Invoke-WebRequest -Uri "https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/$LLVM_INSTALLER" -OutFile $LLVM_INSTALLER
-          Start-Process -FilePath ".\\$LLVM_INSTALLER" -ArgumentList "/S", "/D=$LLVM_INSTALL_DIR" -Wait
-          $LLVM_CMAKE_DIR = "$LLVM_INSTALL_DIR\\lib\\cmake\\llvm"
+          choco install llvm --version=${{ env.LLVM_VERSION }} --allow-downgrade -y
+          $LLVM_CMAKE_DIR = "C:/Program Files/LLVM/lib/cmake/llvm"
           if (-not (Test-Path $LLVM_CMAKE_DIR)) {
             Write-Error "LLVM CMake directory not found: $LLVM_CMAKE_DIR"
             exit 1
           }
-          # Use forward slashes to avoid escaping issues when passing as -D value.
-          $LLVM_CMAKE_DIR = $LLVM_CMAKE_DIR -replace '\\', '/'
-          # Persist the CMake package path for an explicit cmake-js --CD flag.
           "LLVM_CMAKE_DIR=$LLVM_CMAKE_DIR" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Install Dependencies
         run: npm install --ignore-scripts
