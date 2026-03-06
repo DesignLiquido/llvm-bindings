@@ -50,8 +50,11 @@ jobs:
       - name: Install LLVM on Windows
         if: startsWith(matrix.os, 'windows')
         run: |
-          choco install llvm --version=${{ env.LLVM_VERSION }} --allow-downgrade -y
-          $LLVM_CMAKE_DIR = "C:/Program Files/LLVM/lib/cmake/llvm"
+          $LLVM_VERSION = "${{ env.LLVM_VERSION }}"
+          $LLVM_PREBUILT_FILE = "llvm-$LLVM_VERSION-windows-2022.zip"
+          curl -sLO "https://github.com/ApsarasX/llvm-windows/releases/download/llvmorg-$LLVM_VERSION/$LLVM_PREBUILT_FILE"
+          Expand-Archive -Path $LLVM_PREBUILT_FILE -DestinationPath .
+          $LLVM_CMAKE_DIR = "$pwd/LLVM-$LLVM_VERSION-win64/lib/cmake/llvm"
           if (-not (Test-Path $LLVM_CMAKE_DIR)) {
             Write-Error "LLVM CMake directory not found: $LLVM_CMAKE_DIR"
             exit 1
@@ -113,8 +116,11 @@ jobs:
       - name: Install LLVM on Windows
         if: startsWith(matrix.os, 'windows')
         run: |
-          choco install llvm --version=${{ env.LLVM_VERSION }} --allow-downgrade -y
-          $LLVM_CMAKE_DIR = "C:/Program Files/LLVM/lib/cmake/llvm"
+          $LLVM_VERSION = "${{ env.LLVM_VERSION }}"
+          $LLVM_PREBUILT_FILE = "llvm-$LLVM_VERSION-${{ matrix.os }}.zip"
+          curl -sLO "https://github.com/ApsarasX/llvm-windows/releases/download/llvmorg-$LLVM_VERSION/$LLVM_PREBUILT_FILE"
+          Expand-Archive -Path $LLVM_PREBUILT_FILE -DestinationPath .
+          $LLVM_CMAKE_DIR = "$pwd/LLVM-$LLVM_VERSION-win64/lib/cmake/llvm"
           if (-not (Test-Path $LLVM_CMAKE_DIR)) {
             Write-Error "LLVM CMake directory not found: $LLVM_CMAKE_DIR"
             exit 1
