@@ -19,7 +19,74 @@ env:
   LLVM_VERSION_MAJOR: 14
 
 jobs:
-  build:
+  build-push:
+    if: github.event_name == 'push'
+    name: Node.js ${{ matrix.node }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-12, ubuntu-22.04, windows-2022 ]
+        node: [ 22 ]
+    steps:
+      - name: Fetch Codebase
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          check-latest: true
+      - name: Install LLVM and Ninja on macOS
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          brew update
+          brew install llvm@${{ env.LLVM_VERSION_MAJOR }} ninja
+      - name: Install LLVM and Ninja on Ubuntu
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          sudo wget https://apt.llvm.org/llvm.sh
+          sudo chmod +x llvm.sh
+          sudo ./llvm.sh ${{ env.LLVM_VERSION_MAJOR }}
+          sudo apt-get install ninja-build
+      - name: Install LLVM on Windows
+        if: startsWith(matrix.os, 'windows')
+        run: |
+          $LLVM_VERSION = "${{ env.LLVM_VERSION }}"
+          $LLVM_PREBUILT_FILE = "llvm-$LLVM_VERSION-${{ matrix.os }}.zip"
+          curl -sLO https://github.com/ApsarasX/llvm-windows/releases/download/llvmorg-$LLVM_VERSION/$LLVM_PREBUILT_FILE
+          Expand-Archive -Path $LLVM_PREBUILT_FILE -DestinationPath .
+          $LLVM_CMAKE_DIR = "$pwd\\LLVM-$LLVM_VERSION-win64\\lib\\cmake\\llvm"
+          if (-not (Test-Path $LLVM_CMAKE_DIR)) {
+            Write-Error "LLVM CMake directory not found: $LLVM_CMAKE_DIR"
+            exit 1
+          }
+          # Use forward slashes to avoid escaping issues when passing as -D value.
+          $LLVM_CMAKE_DIR = $LLVM_CMAKE_DIR -replace '\\', '/'
+          # Persist the CMake package path for an explicit cmake-js --CD flag.
+          "LLVM_CMAKE_DIR=$LLVM_CMAKE_DIR" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Install Dependencies
+        run: npm install --ignore-scripts
+      - name: CMake Build Debug and Test
+        if: startsWith(matrix.os, 'windows') == false
+        run: |
+          npm run clear
+          npm run build:debug
+          npm test
+      - name: CMake Build Release and Test on Windows
+        if: startsWith(matrix.os, 'windows')
+        run: |
+          npm run clear
+          npx cmake-js print-configure "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR"
+          npx cmake-js build "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR"
+          npm test
+      - name: CMake Build Release and Test on non-Windows
+        if: startsWith(matrix.os, 'windows') == false
+        run: |
+          npm run clear
+          npm run build:release
+          npm test
+
+  build-pr:
+    if: github.event_name == 'pull_request'
     name: Node.js ${{ matrix.node }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -57,6 +124,12 @@ jobs:
           curl -sLO https://github.com/ApsarasX/llvm-windows/releases/download/llvmorg-$LLVM_VERSION/$LLVM_PREBUILT_FILE
           Expand-Archive -Path $LLVM_PREBUILT_FILE -DestinationPath .
           $LLVM_CMAKE_DIR = "$pwd\\LLVM-$LLVM_VERSION-win64\\lib\\cmake\\llvm"
+          if (-not (Test-Path $LLVM_CMAKE_DIR)) {
+            Write-Error "LLVM CMake directory not found: $LLVM_CMAKE_DIR"
+            exit 1
+          }
+          # Use forward slashes to avoid escaping issues when passing as -D value.
+          $LLVM_CMAKE_DIR = $LLVM_CMAKE_DIR -replace '\\', '/'
           # Persist the CMake package path for an explicit cmake-js --CD flag.
           "LLVM_CMAKE_DIR=$LLVM_CMAKE_DIR" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Install Dependencies
@@ -71,7 +144,8 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           npm run clear
-          npx cmake-js build --CDLLVM_DIR="$env:LLVM_CMAKE_DIR"
+          npx cmake-js print-configure "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR"
+          npx cmake-js build "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR"
           npm test
       - name: CMake Build Release and Test on non-Windows
         if: startsWith(matrix.os, 'windows') == false
