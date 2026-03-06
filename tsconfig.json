@@ -1,14 +1,14 @@
 {
     "include": [
-        "llvm-bindings.ts",
-        "test/**/*.ts",
-        "tests/**/*.ts",
+        "index.ts"
     ],
     "compilerOptions": {
         "target": "ES5",
         "module": "commonjs",
+        "outDir": "dist",
         "strict": true,
         "moduleResolution": "node",
+        "types": ["node", "jest"],
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true
     }
