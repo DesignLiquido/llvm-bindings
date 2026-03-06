@@ -1,6 +1,6 @@
 {
     "name": "@designliquido/llvm-bindings",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "LLVM bindings for Node.js/JavaScript/TypeScript",
     "keywords": [
         "llvm",
@@ -32,8 +32,6 @@
         "clear": "rimraf build dist",
         "test:legacy": "ts-node test/index.ts",
         "test": "yarn build:ts && yarn test:legacy && yarn jest --verbose",
-        "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md",
-        "postversion": "git push && git push --tags && yarn publish --non-interactive",
         "release:patch": "release-it patch",
         "release:minor": "release-it minor",
         "release:major": "release-it major"
