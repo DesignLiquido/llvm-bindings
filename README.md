@@ -1,10 +1,10 @@
 # llvm-bindings
 
-LLVM bindings for Node.js/JavaScript/TypeScript
+LLVM bindings for Node.js/JavaScript/TypeScript. This project is a hard fork of https://github.com/ApsarasX/llvm-bindings, which it does not seem to be maintained anymore.
 
-[![github-action](https://img.shields.io/github/workflow/status/ApsarasX/llvm-bindings/Build?style=flat-square)](https://github.com/ApsarasX/llvm-bindings/actions)
-[![npm](https://img.shields.io/npm/v/llvm-bindings?style=flat-square)](https://www.npmjs.com/package/llvm-bindings)
-[![github-license](https://img.shields.io/github/license/ApsarasX/llvm-bindings?style=flat-square)](https://github.com/ApsarasX/llvm-bindings/blob/master/LICENSE)
+[![github-action](https://img.shields.io/github/workflow/status/DesignLiquido/llvm-bindings/Build?style=flat-square)](https://github.com/DesignLiquido/llvm-bindings/actions)
+[![npm](https://img.shields.io/npm/v/@designliquido/llvm-bindings?style=flat-square)](https://www.npmjs.com/package/@designliquido/llvm-bindings)
+[![github-license](https://img.shields.io/github/license/DesignLiquido/llvm-bindings?style=flat-square)](https://github.com/DesignLiquido/llvm-bindings/blob/master/LICENSE)
 
 ## Supported OS
 
@@ -132,6 +132,7 @@ Due to the limitation of `node-addon-api`, this project has not implemented inhe
 | 0.4.x                  | 14.0.x                   |
 
 ## Acknowledgments
-- [MichaReiser](https://github.com/MichaReiser): the creator of [llvm-node](https://github.com/MichaReiser/llvm-node)
 
-> [llvm-bindings](https://github.com/ApsarasX/llvm-bindings) is mostly inspired by [llvm-node](https://github.com/MichaReiser/llvm-node).
+- [MichaReiser](https://github.com/MichaReiser): the creator of [llvm-node](https://github.com/MichaReiser/llvm-node)
+- [ApsarasX's original `llvm-bindings` project](https://github.com/ApsarasX/llvm-bindings)
+

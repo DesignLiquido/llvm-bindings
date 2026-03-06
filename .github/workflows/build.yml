@@ -7,16 +7,12 @@ on:
     paths-ignore:
       - '*.md'
       - 'LICENSE'
-    tags-ignore:
-      - '**'
   pull_request:
     branches:
       - '**'
     paths-ignore:
       - '*.md'
       - 'LICENSE'
-    tags-ignore:
-      - '**'
 
 env:
   LLVM_VERSION: 14.0.6

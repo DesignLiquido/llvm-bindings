@@ -1,6 +1,6 @@
 {
-    "name": "llvm-bindings",
-    "version": "0.4.2",
+    "name": "@designliquido/llvm-bindings",
+    "version": "0.0.0",
     "description": "LLVM bindings for Node.js/JavaScript/TypeScript",
     "keywords": [
         "llvm",
@@ -12,12 +12,12 @@
         "llvm-javascript"
     ],
     "license": "MIT",
-    "author": "ApsarasX",
+    "author": "Design Liquido",
     "main": "index.js",
     "types": "llvm-bindings.d.ts",
     "repository": {
         "type": "git",
-        "url": "https://github.com/ApsarasX/llvm-bindings.git"
+        "url": "https://github.com/DesignLiquido/llvm-bindings.git"
     },
     "scripts": {
         "postinstall": "cmake-js compile",
