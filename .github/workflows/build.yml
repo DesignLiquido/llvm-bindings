@@ -51,10 +51,11 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           $LLVM_VERSION = "${{ env.LLVM_VERSION }}"
-          $LLVM_PREBUILT_FILE = "llvm-$LLVM_VERSION-${{ matrix.os }}.zip"
-          curl -sLO https://github.com/ApsarasX/llvm-windows/releases/download/llvmorg-$LLVM_VERSION/$LLVM_PREBUILT_FILE
-          Expand-Archive -Path $LLVM_PREBUILT_FILE -DestinationPath .
-          $LLVM_CMAKE_DIR = "$pwd\\LLVM-$LLVM_VERSION-win64\\lib\\cmake\\llvm"
+          $LLVM_INSTALLER = "LLVM-$LLVM_VERSION-win64.exe"
+          $LLVM_INSTALL_DIR = "$pwd\\llvm-install"
+          Invoke-WebRequest -Uri "https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/$LLVM_INSTALLER" -OutFile $LLVM_INSTALLER
+          Start-Process -FilePath ".\\$LLVM_INSTALLER" -ArgumentList "/S", "/D=$LLVM_INSTALL_DIR" -Wait
+          $LLVM_CMAKE_DIR = "$LLVM_INSTALL_DIR\\lib\\cmake\\llvm"
           if (-not (Test-Path $LLVM_CMAKE_DIR)) {
             Write-Error "LLVM CMake directory not found: $LLVM_CMAKE_DIR"
             exit 1
@@ -75,8 +76,8 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           npm run clear
-          npx cmake-js print-configure "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL'
-          npx cmake-js build "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL'
+          npx cmake-js print-configure "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL'
+          npx cmake-js build "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL'
           npm test
       - name: CMake Build Release and Test on non-Windows
         if: startsWith(matrix.os, 'windows') == false
@@ -120,10 +121,11 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           $LLVM_VERSION = "${{ env.LLVM_VERSION }}"
-          $LLVM_PREBUILT_FILE = "llvm-$LLVM_VERSION-${{ matrix.os }}.zip"
-          curl -sLO https://github.com/ApsarasX/llvm-windows/releases/download/llvmorg-$LLVM_VERSION/$LLVM_PREBUILT_FILE
-          Expand-Archive -Path $LLVM_PREBUILT_FILE -DestinationPath .
-          $LLVM_CMAKE_DIR = "$pwd\\LLVM-$LLVM_VERSION-win64\\lib\\cmake\\llvm"
+          $LLVM_INSTALLER = "LLVM-$LLVM_VERSION-win64.exe"
+          $LLVM_INSTALL_DIR = "$pwd\\llvm-install"
+          Invoke-WebRequest -Uri "https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/$LLVM_INSTALLER" -OutFile $LLVM_INSTALLER
+          Start-Process -FilePath ".\\$LLVM_INSTALLER" -ArgumentList "/S", "/D=$LLVM_INSTALL_DIR" -Wait
+          $LLVM_CMAKE_DIR = "$LLVM_INSTALL_DIR\\lib\\cmake\\llvm"
           if (-not (Test-Path $LLVM_CMAKE_DIR)) {
             Write-Error "LLVM CMake directory not found: $LLVM_CMAKE_DIR"
             exit 1
@@ -144,8 +146,8 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           npm run clear
-          npx cmake-js print-configure "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL'
-          npx cmake-js build "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL'
+          npx cmake-js print-configure "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL'
+          npx cmake-js build "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL'
           npm test
       - name: CMake Build Release and Test on non-Windows
         if: startsWith(matrix.os, 'windows') == false
