@@ -75,8 +75,8 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           npm run clear
-          npx cmake-js print-configure "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR"
-          npx cmake-js build "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR"
+          npx cmake-js print-configure "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL'
+          npx cmake-js build "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL'
           npm test
       - name: CMake Build Release and Test on non-Windows
         if: startsWith(matrix.os, 'windows') == false
@@ -144,8 +144,8 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           npm run clear
-          npx cmake-js print-configure "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR"
-          npx cmake-js build "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR"
+          npx cmake-js print-configure "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL'
+          npx cmake-js build "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL'
           npm test
       - name: CMake Build Release and Test on non-Windows
         if: startsWith(matrix.os, 'windows') == false
