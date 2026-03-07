@@ -17,3 +17,6 @@ test/temp/
 
 /**/**/.DS_Store
 cmake_install.cmake
+
+.claude/
+CLAUDE.md
