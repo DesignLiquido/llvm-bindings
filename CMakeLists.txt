@@ -18,6 +18,13 @@ add_library(${PROJECT_NAME} SHARED ${CMAKE_JS_SRC} ${SOURCE_FILES})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node" LINKER_LANGUAGE CXX)
 
+if (MSVC)
+    # cmake-js forces /MT (MultiThreaded static CRT), but LLVM 14 prebuilt Windows
+    # libraries were compiled with /MD (MultiThreadedDLL dynamic CRT). Override
+    # per-target so the linker can resolve __imp_strdup, __imp_read, etc. from ucrtbase.dll.
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+endif ()
+
 execute_process(
         COMMAND node -p "require('node-addon-api').include"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
