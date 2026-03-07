@@ -122,12 +122,12 @@ Due to the limitation of `node-addon-api`, this project has not implemented inhe
 
 ## Compatibility
 
-| llvm-bindings versions | compatible LLVM versions |
-|------------------------|--------------------------|
-| 0.0.x, 0.1.x           | 11.0.x, 11.1.x           |
-| 0.2.x                  | 12.0.x                   |
-| 0.3.x                  | 13.0.x                   |
-| 0.4.x                  | 14.0.x                   |
+| llvm-bindings versions                     | compatible LLVM versions |
+|--------------------------------------------|--------------------------|
+| (original llvm-bindings repo) 0.0.x, 0.1.x | 11.0.x, 11.1.x           |
+| (original llvm-bindings repo) 0.2.x        | 12.0.x                   |
+| (original llvm-bindings repo) 0.3.x        | 13.0.x                   |
+| (original llvm-bindings repo) 0.4.x        | 14.0.x                   |
 
 ## Acknowledgments
 
