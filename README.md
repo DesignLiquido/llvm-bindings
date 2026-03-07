@@ -2,7 +2,7 @@
 
 LLVM bindings for Node.js/JavaScript/TypeScript. This project is a hard fork of https://github.com/ApsarasX/llvm-bindings, which it does not seem to be maintained anymore.
 
-[![github-action](https://img.shields.io/github/workflow/status/DesignLiquido/llvm-bindings/Build?style=flat-square)](https://github.com/DesignLiquido/llvm-bindings/actions)
+[![github-action](https://img.shields.io/github/actions/workflow/status/DesignLiquido/llvm-bindings/build.yml?style=flat-square)](https://github.com/DesignLiquido/llvm-bindings/actions)
 [![npm](https://img.shields.io/npm/v/@designliquido/llvm-bindings?style=flat-square)](https://www.npmjs.com/package/@designliquido/llvm-bindings)
 [![github-license](https://img.shields.io/github/license/DesignLiquido/llvm-bindings?style=flat-square)](https://github.com/DesignLiquido/llvm-bindings/blob/master/LICENSE)
 
