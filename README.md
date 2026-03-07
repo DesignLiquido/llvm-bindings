@@ -8,16 +8,13 @@ LLVM bindings for Node.js/JavaScript/TypeScript. This project is a hard fork of 
 
 ## Supported OS
 
-|                      | x86_64 | ARM64 |
-|:--------------------:|:------:|:-----:|
-| macOS 10.15 Catalina |   ✅    |   /   |
-|   macOS 11 Big Sur   |   ✅    |   ✅   |
-|  macOS 12 Monterey   |   ✅    |   ✅   |
-|     Ubuntu 18.04     |   ✅    |   ✅   |
-|     Ubuntu 20.04     |   ✅    |   ✅   |
-|     Ubuntu 22.04     |   ✅    |   ✅   |
-|      Windows 10      |   ✅    |  ⚠️   |
-|      Windows 11      |   ✅    |  ⚠️   |
+|                    | x86_64 | ARM64 |
+|:------------------:|:------:|:-----:|
+| macOS 15 Sequoia   |   ✅   |   ✅  |
+|     macOS 26       |   /    |   ✅  |
+|   Ubuntu 22.04     |   ✅   |   /   |
+|   Ubuntu 24.04     |   ✅   |   /   |
+| Windows Server 2022|   ✅   |  ⚠️  |
 
 > ⚠️ means not tested.
 
