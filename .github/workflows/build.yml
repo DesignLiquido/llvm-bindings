@@ -47,34 +47,14 @@ jobs:
           sudo chmod +x llvm.sh
           sudo ./llvm.sh ${{ env.LLVM_VERSION_MAJOR }}
           sudo apt-get install ninja-build
-      - name: Cache LLVM install
+      - name: Install LLVM on Windows
         if: startsWith(matrix.os, 'windows')
-        id: cache-llvm
-        uses: actions/cache@v4
-        with:
-          path: llvm-install
-          key: llvm-${{ env.LLVM_VERSION }}-${{ matrix.os }}-msvc
-      - name: Build LLVM from source on Windows
-        if: startsWith(matrix.os, 'windows') && steps.cache-llvm.outputs.cache-hit != 'true'
         run: |
           $LLVM_VERSION = "${{ env.LLVM_VERSION }}"
-          curl -sLO "https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/llvm-$LLVM_VERSION.src.tar.xz"
-          tar -xf "llvm-$LLVM_VERSION.src.tar.xz"
-          cmake -S "llvm-$LLVM_VERSION.src" -B llvm-build `
-            -G "Visual Studio 17 2022" -A x64 `
-            -DCMAKE_BUILD_TYPE=Release `
-            -DCMAKE_INSTALL_PREFIX="$pwd/llvm-install" `
-            -DLLVM_TARGETS_TO_BUILD=X86 `
-            -DLLVM_INCLUDE_TESTS=OFF `
-            -DLLVM_INCLUDE_BENCHMARKS=OFF `
-            -DLLVM_INCLUDE_EXAMPLES=OFF `
-            -DLLVM_BUILD_TOOLS=OFF `
-            -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL
-          cmake --build llvm-build --config Release --target install -j 4
-      - name: Set LLVM_CMAKE_DIR on Windows
-        if: startsWith(matrix.os, 'windows')
-        run: |
-          $LLVM_CMAKE_DIR = "$pwd/llvm-install/lib/cmake/llvm"
+          $LLVM_PREBUILT_FILE = "llvm-$LLVM_VERSION-windows-2022.zip"
+          curl -sLO "https://github.com/DesignLiquido/llvm-windows/releases/download/llvmorg-$LLVM_VERSION/$LLVM_PREBUILT_FILE"
+          Expand-Archive -Path $LLVM_PREBUILT_FILE -DestinationPath .
+          $LLVM_CMAKE_DIR = "$pwd/LLVM-$LLVM_VERSION-win64/lib/cmake/llvm"
           if (-not (Test-Path $LLVM_CMAKE_DIR)) {
             Write-Error "LLVM CMake directory not found: $LLVM_CMAKE_DIR"
             exit 1
@@ -133,35 +113,14 @@ jobs:
           sudo chmod +x llvm.sh
           sudo ./llvm.sh ${{ env.LLVM_VERSION_MAJOR }}
           sudo apt-get install ninja-build
-      - name: Cache LLVM install
+      - name: Install LLVM on Windows
         if: startsWith(matrix.os, 'windows')
-        id: cache-llvm
-        uses: actions/cache@v4
-        with:
-          path: llvm-install
-          key: llvm-${{ env.LLVM_VERSION }}-${{ matrix.os }}-msvc
-      - name: Build LLVM from source on Windows
-        if: startsWith(matrix.os, 'windows') && steps.cache-llvm.outputs.cache-hit != 'true'
         run: |
           $LLVM_VERSION = "${{ env.LLVM_VERSION }}"
-          $VS_GENERATOR = if ("${{ matrix.os }}" -eq "windows-2019") { "Visual Studio 16 2019" } else { "Visual Studio 17 2022" }
-          curl -sLO "https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/llvm-$LLVM_VERSION.src.tar.xz"
-          tar -xf "llvm-$LLVM_VERSION.src.tar.xz"
-          cmake -S "llvm-$LLVM_VERSION.src" -B llvm-build `
-            -G "$VS_GENERATOR" -A x64 `
-            -DCMAKE_BUILD_TYPE=Release `
-            -DCMAKE_INSTALL_PREFIX="$pwd/llvm-install" `
-            -DLLVM_TARGETS_TO_BUILD=X86 `
-            -DLLVM_INCLUDE_TESTS=OFF `
-            -DLLVM_INCLUDE_BENCHMARKS=OFF `
-            -DLLVM_INCLUDE_EXAMPLES=OFF `
-            -DLLVM_BUILD_TOOLS=OFF `
-            -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL
-          cmake --build llvm-build --config Release --target install -j 4
-      - name: Set LLVM_CMAKE_DIR on Windows
-        if: startsWith(matrix.os, 'windows')
-        run: |
-          $LLVM_CMAKE_DIR = "$pwd/llvm-install/lib/cmake/llvm"
+          $LLVM_PREBUILT_FILE = "llvm-$LLVM_VERSION-windows-2022.zip"
+          curl -sLO "https://github.com/DesignLiquido/llvm-windows/releases/download/llvmorg-$LLVM_VERSION/$LLVM_PREBUILT_FILE"
+          Expand-Archive -Path $LLVM_PREBUILT_FILE -DestinationPath .
+          $LLVM_CMAKE_DIR = "$pwd/LLVM-$LLVM_VERSION-win64/lib/cmake/llvm"
           if (-not (Test-Path $LLVM_CMAKE_DIR)) {
             Write-Error "LLVM CMake directory not found: $LLVM_CMAKE_DIR"
             exit 1
