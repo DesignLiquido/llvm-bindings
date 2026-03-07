@@ -40,13 +40,18 @@ jobs:
         run: |
           brew update
           brew install llvm@${{ env.LLVM_VERSION_MAJOR }} ninja
-      - name: Install LLVM and Ninja on Ubuntu
-        if: startsWith(matrix.os, 'ubuntu')
+      - name: Install LLVM and Ninja on Ubuntu (via llvm.sh)
+        if: startsWith(matrix.os, 'ubuntu') && matrix.os != 'ubuntu-24.04'
         run: |
           sudo wget https://apt.llvm.org/llvm.sh
           sudo chmod +x llvm.sh
           sudo ./llvm.sh ${{ env.LLVM_VERSION_MAJOR }}
           sudo apt-get install ninja-build
+      - name: Install LLVM and Ninja on Ubuntu 24.04
+        if: matrix.os == 'ubuntu-24.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y llvm-${{ env.LLVM_VERSION_MAJOR }}-dev ninja-build
       - name: Install LLVM on Windows
         if: startsWith(matrix.os, 'windows')
         run: |
@@ -90,9 +95,6 @@ jobs:
       matrix:
         os: [ macos-15, macos-15-intel, macos-26, ubuntu-22.04, ubuntu-24.04, windows-2022 ]
         node: [ 18, 20, 22 ]
-        exclude:
-          - os: ubuntu-18.04
-            node: 20
     steps:
       - name: Fetch Codebase
         uses: actions/checkout@v4
@@ -106,13 +108,18 @@ jobs:
         run: |
           brew update
           brew install llvm@${{ env.LLVM_VERSION_MAJOR }} ninja
-      - name: Install LLVM and Ninja on Ubuntu
-        if: startsWith(matrix.os, 'ubuntu')
+      - name: Install LLVM and Ninja on Ubuntu (via llvm.sh)
+        if: startsWith(matrix.os, 'ubuntu') && matrix.os != 'ubuntu-24.04'
         run: |
           sudo wget https://apt.llvm.org/llvm.sh
           sudo chmod +x llvm.sh
           sudo ./llvm.sh ${{ env.LLVM_VERSION_MAJOR }}
           sudo apt-get install ninja-build
+      - name: Install LLVM and Ninja on Ubuntu 24.04
+        if: matrix.os == 'ubuntu-24.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y llvm-${{ env.LLVM_VERSION_MAJOR }}-dev ninja-build
       - name: Install LLVM on Windows
         if: startsWith(matrix.os, 'windows')
         run: |
