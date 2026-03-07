@@ -20,7 +20,8 @@
         "url": "https://github.com/DesignLiquido/llvm-bindings.git"
     },
     "publishConfig": {
-        "registry": "https://registry.npmjs.org/"
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
     },
     "scripts": {
         "build": "yarn build:ts",
