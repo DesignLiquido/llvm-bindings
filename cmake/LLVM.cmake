@@ -1,7 +1,9 @@
 if (CMAKE_HOST_APPLE)
-    file(GLOB LLVM_DIRS /usr/local/opt/llvm*)
+    file(GLOB LLVM_DIRS_INTEL /usr/local/opt/llvm*)
+    file(GLOB LLVM_DIRS_ARM /opt/homebrew/opt/llvm*)
+    list(APPEND LLVM_DIRS ${LLVM_DIRS_INTEL} ${LLVM_DIRS_ARM})
     foreach (LLVM_DIR ${LLVM_DIRS})
-        list(APPEND CMAKE_PREFIX_PATH ${LLVM_DIRS}/lib/cmake/llvm)
+        list(APPEND CMAKE_PREFIX_PATH ${LLVM_DIR}/lib/cmake/llvm)
     endforeach ()
 endif ()
 
