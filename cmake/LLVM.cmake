@@ -7,7 +7,7 @@ if (CMAKE_HOST_APPLE)
     endforeach ()
 endif ()
 
-find_package(LLVM 14 REQUIRED CONFIG)
+find_package(LLVM 15 REQUIRED CONFIG)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 

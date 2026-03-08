@@ -247,7 +247,6 @@ declare namespace llvm {
             VoidTyID: number;
             LabelTyID: number;
             MetadataTyID: number;
-            X86_MMXTyID: number;
             TokenTyID: number;
             IntegerTyID: number;
             FunctionTyID: number;
@@ -277,8 +276,6 @@ declare namespace llvm {
         public static getFP128Ty(context: LLVMContext): Type;
 
         public static getPPC_FP128Ty(context: LLVMContext): Type;
-
-        public static getX86_MMXTy(context: LLVMContext): Type;
 
         public static getTokenTy(context: LLVMContext): Type;
 
@@ -310,8 +307,6 @@ declare namespace llvm {
 
         public static getPPC_FP128PtrTy(context: LLVMContext, addrSpace?: number): PointerType;
 
-        public static getX86_MMXPtrTy(context: LLVMContext, addrSpace?: number): PointerType;
-
         public static getInt1PtrTy(context: LLVMContext, addrSpace?: number): PointerType;
 
         public static getInt8PtrTy(context: LLVMContext, addrSpace?: number): PointerType;
@@ -341,8 +336,6 @@ declare namespace llvm {
         public isPPC_FP128Ty(): boolean;
 
         public isFloatingPointTy(): boolean;
-
-        public isX86_MMXTy(): boolean;
 
         public isLabelTy(): boolean;
 

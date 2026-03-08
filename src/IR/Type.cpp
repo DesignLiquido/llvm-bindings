@@ -59,7 +59,6 @@ void Type::Init(Napi::Env env, Napi::Object &exports) {
     typeID.Set("VoidTyID", Napi::Number::New(env, llvm::Type::TypeID::VoidTyID));
     typeID.Set("LabelTyID", Napi::Number::New(env, llvm::Type::TypeID::LabelTyID));
     typeID.Set("MetadataTyID", Napi::Number::New(env, llvm::Type::TypeID::MetadataTyID));
-    typeID.Set("X86_MMXTyID", Napi::Number::New(env, llvm::Type::TypeID::X86_MMXTyID));
     typeID.Set("TokenTyID", Napi::Number::New(env, llvm::Type::TypeID::TokenTyID));
     typeID.Set("IntegerTyID", Napi::Number::New(env, llvm::Type::TypeID::IntegerTyID));
     typeID.Set("FunctionTyID", Napi::Number::New(env, llvm::Type::TypeID::FunctionTyID));
@@ -81,7 +80,6 @@ void Type::Init(Napi::Env env, Napi::Object &exports) {
             StaticMethod("getX86_FP80Ty", &getTypeFactory<&llvm::Type::getX86_FP80Ty>),
             StaticMethod("getFP128Ty", &getTypeFactory<&llvm::Type::getFP128Ty>),
             StaticMethod("getPPC_FP128Ty", &getTypeFactory<&llvm::Type::getPPC_FP128Ty>),
-            StaticMethod("getX86_MMXTy", &getTypeFactory<&llvm::Type::getX86_MMXTy>),
             StaticMethod("getTokenTy", &getTypeFactory<&llvm::Type::getTokenTy>),
             StaticMethod("getIntNTy", &Type::getIntNTy),
             StaticMethod("getInt1Ty", &getIntTypeFactory<&llvm::Type::getInt1Ty>),
@@ -97,7 +95,6 @@ void Type::Init(Napi::Env env, Napi::Object &exports) {
             StaticMethod("getX86_FP80PtrTy", &getPointerTypeFactory<&llvm::Type::getX86_FP80PtrTy>),
             StaticMethod("getFP128PtrTy", &getPointerTypeFactory<&llvm::Type::getFP128PtrTy>),
             StaticMethod("getPPC_FP128PtrTy", &getPointerTypeFactory<&llvm::Type::getPPC_FP128PtrTy>),
-            StaticMethod("getX86_MMXPtrTy", &getPointerTypeFactory<&llvm::Type::getX86_MMXPtrTy>),
             StaticMethod("getInt1PtrTy", &getPointerTypeFactory<&llvm::Type::getInt1PtrTy>),
             StaticMethod("getInt8PtrTy", &getPointerTypeFactory<&llvm::Type::getInt8PtrTy>),
             StaticMethod("getInt16PtrTy", &getPointerTypeFactory<&llvm::Type::getInt16PtrTy>),
@@ -113,7 +110,6 @@ void Type::Init(Napi::Env env, Napi::Object &exports) {
             InstanceMethod("isFP128Ty", &Type::isTypeFactory<&llvm::Type::isFP128Ty>),
             InstanceMethod("isPPC_FP128Ty", &Type::isTypeFactory<&llvm::Type::isPPC_FP128Ty>),
             InstanceMethod("isFloatingPointTy", &Type::isTypeFactory<&llvm::Type::isFloatingPointTy>),
-            InstanceMethod("isX86_MMXTy", &Type::isTypeFactory<&llvm::Type::isX86_MMXTy>),
             InstanceMethod("isLabelTy", &Type::isTypeFactory<&llvm::Type::isLabelTy>),
             InstanceMethod("isMetadataTy", &Type::isTypeFactory<&llvm::Type::isMetadataTy>),
             InstanceMethod("isTokenTy", &Type::isTypeFactory<&llvm::Type::isTokenTy>),
