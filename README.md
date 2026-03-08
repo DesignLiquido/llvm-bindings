@@ -28,7 +28,7 @@ listed in the [TypeScript definition file](./llvm-bindings.d.ts).
 
 ```shell
 # install cmake and llvm by homebrew
-brew install cmake llvm@14
+brew install cmake llvm@15
 
 # install llvm-bindings by yarn
 yarn add llvm-bindings
@@ -40,7 +40,7 @@ yarn add llvm-bindings
 #install llvm by installation script
 wget https://apt.llvm.org/llvm.sh
 sudo chmod +x llvm.sh
-sudo ./llvm.sh 14
+sudo ./llvm.sh 15
 
 # install cmake and zlib by apt-get
 sudo apt-get install cmake zlib1g-dev
@@ -53,14 +53,14 @@ yarn add llvm-bindings
 
 First, please refer to [Build LLVM from sources on Windows 10](https://github.com/ApsarasX/llvm-bindings/wiki/Build-LLVM-from-source-code-on-Windows-10) to build LLVM. An alternative is to download [prebuilt LLVM binary](https://github.com/ApsarasX/llvm-windows/releases).
 
-Then, find the `llvm-config` command in your LLVM build directory and execute `llvm-config --cmakedir` to get LLVM cmake directory, assuming `C:\Users\dev\llvm-13.0.1.src\build\lib\cmake\llvm`.
+Then, find the `llvm-config` command in your LLVM build directory and execute `llvm-config --cmakedir` to get LLVM cmake directory, assuming `C:\Users\dev\llvm-15.0.7.src\build\lib\cmake\llvm`.
 
 Finally, execute the following commands.
 
 ```shell
 # specify the LLVM cmake directory for cmake-js
 # note: cmake-js reads npm-style config keys
-npm config set cmake_LLVM_DIR C:\Users\dev\llvm-13.0.1.src\build\lib\cmake\llvm
+npm config set cmake_LLVM_DIR C:\Users\dev\llvm-15.0.7.src\build\lib\cmake\llvm
 
 # install llvm-bindings by yarn
 yarn add llvm-bindings
