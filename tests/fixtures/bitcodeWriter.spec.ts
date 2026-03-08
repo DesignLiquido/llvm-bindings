@@ -6,6 +6,12 @@ import llvm from '../..';
 describe('Test Bitcode Writer (IR fixture)', () => {
     const outputPath = path.join(os.tmpdir(), 'llvm-bindings-writer-test.bc');
 
+    beforeEach(() => {
+        if (fs.existsSync(outputPath)) {
+            fs.unlinkSync(outputPath);
+        }
+    });
+
     afterEach(() => {
         if (fs.existsSync(outputPath)) {
             fs.unlinkSync(outputPath);
@@ -22,7 +28,7 @@ describe('Test Bitcode Writer (IR fixture)', () => {
         const functionType = llvm.FunctionType.get(returnType, paramTypes, false);
         const func = llvm.Function.Create(functionType, llvm.Function.LinkageTypes.ExternalLinkage, 'writer', module);
 
-        const entryBB = llvm.BasicBlock.Create(context, 'entry');
+        const entryBB = llvm.BasicBlock.Create(context, 'entry', func);
         builder.SetInsertPoint(entryBB);
         const result = builder.CreateAdd(func.getArg(0), func.getArg(1));
         builder.CreateRet(result);
