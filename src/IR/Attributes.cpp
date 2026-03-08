@@ -9,7 +9,8 @@ void Attribute::Init(Napi::Env env, Napi::Object &exports) {
 #define GET_ATTR_NAMES
 #define ATTRIBUTE_ENUM(EnumName, lower) attributeKinds.Set(#EnumName, Napi::Number::New(env, llvm::Attribute::AttrKind::EnumName));
 #include "llvm/IR/Attributes.inc"
-
+#undef GET_ATTR_NAMES
+#undef ATTRIBUTE_ENUM
 
     Napi::Function func = DefineClass(env, "Attribute", {
             StaticValue("AttrKind", attributeKinds),

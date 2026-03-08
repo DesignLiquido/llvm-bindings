@@ -129,7 +129,9 @@ void Function::insertAfter(const Napi::CallbackInfo &info) {
     }
     llvm::BasicBlock *where = BasicBlock::Extract(info[0]);
     llvm::BasicBlock *bb = BasicBlock::Extract(info[1]);
-    function->insert(where->getIterator(), bb);
+    auto it = where->getIterator();
+    ++it;
+    function->insert(it, bb);
 }
 
 void Function::deleteBody(const Napi::CallbackInfo &info) {

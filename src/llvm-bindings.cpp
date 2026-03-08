@@ -1,3 +1,8 @@
+#include <cstdio>
+#include <memory>
+#include <stdexcept>
+#include <string>
+
 #include "ADT/index.h"
 #include "BinaryFormat/index.h"
 #include "Bitcode/index.h"

@@ -1945,7 +1945,6 @@ declare namespace llvm {
         const expect_with_probability: number;
         const fabs: number;
         const floor: number;
-        const flt_rounds: number;
         const fma: number;
         const fmuladd: number;
         const fptosi_sat: number;
