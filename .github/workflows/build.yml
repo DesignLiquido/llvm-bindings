@@ -15,8 +15,8 @@ on:
       - 'LICENSE'
 
 env:
-  LLVM_VERSION: 15.0.7
-  LLVM_VERSION_MAJOR: 15
+  LLVM_VERSION: 16.0.6
+  LLVM_VERSION_MAJOR: 16
 
 jobs:
   build-push:
@@ -56,7 +56,7 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           $LLVM_VERSION = "${{ env.LLVM_VERSION }}"
-          $LLVM_PREBUILT_FILE = "llvm-$LLVM_VERSION-windows-latest.zip"
+          $LLVM_PREBUILT_FILE = "llvm-$LLVM_VERSION-windows-2022.zip"
           curl -sLO "https://github.com/DesignLiquido/llvm-windows/releases/download/llvmorg-$LLVM_VERSION/$LLVM_PREBUILT_FILE"
           Expand-Archive -Path $LLVM_PREBUILT_FILE -DestinationPath .
           $LLVM_CMAKE_DIR = "$pwd/LLVM-$LLVM_VERSION-win64/lib/cmake/llvm"
@@ -124,7 +124,7 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           $LLVM_VERSION = "${{ env.LLVM_VERSION }}"
-          $LLVM_PREBUILT_FILE = "llvm-$LLVM_VERSION-windows-latest.zip"
+          $LLVM_PREBUILT_FILE = "llvm-$LLVM_VERSION-windows-2022.zip"
           curl -sLO "https://github.com/DesignLiquido/llvm-windows/releases/download/llvmorg-$LLVM_VERSION/$LLVM_PREBUILT_FILE"
           Expand-Archive -Path $LLVM_PREBUILT_FILE -DestinationPath .
           $LLVM_CMAKE_DIR = "$pwd/LLVM-$LLVM_VERSION-win64/lib/cmake/llvm"

@@ -369,7 +369,7 @@ declare namespace llvm {
 
         public getPrimitiveSizeInBits(): number;
 
-        public getPointerElementType(): Type;
+        public getNonOpaquePointerElementType(): Type;
 
         // extra
         public static isSameType(type1: Type, type2: Type): boolean;
@@ -513,8 +513,10 @@ declare namespace llvm {
         // duplicated
         public getTypeID(): number;
 
-        // duplicated
-        public getPointerElementType(): Type;
+        /**
+         * @deprecated In LLVM 15/16 this is deprecated. LLVM 17 removes it.
+         */
+        public getNonOpaquePointerElementType(): Type;
 
         public isOpaque(): boolean;
 
