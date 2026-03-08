@@ -23,7 +23,6 @@ LLVMContext::LLVMContext(const Napi::CallbackInfo &info) : ObjectWrap(info) {
         throw Napi::TypeError::New(env, ErrMsg::Class::LLVMContext::constructor);
     }
     context = new llvm::LLVMContext();
-    context->setOpaquePointers(false);
 }
 
 llvm::LLVMContext &LLVMContext::getLLVMPrimitive() {

@@ -565,7 +565,7 @@ void PointerType::Init(Napi::Env env, Napi::Object &exports) {
             InstanceMethod("isIntegerTy", &PointerType::isIntegerTy),
             InstanceMethod("isVoidTy", &PointerType::isVoidTy),
             InstanceMethod("getTypeID", &PointerType::getTypeID),
-            InstanceMethod("getPointerElementType", &PointerType::getPointerElementType),
+            InstanceMethod("getNonOpaquePointerElementType", &PointerType::getNonOpaquePointerElementType),
             InstanceMethod("isOpaque", &PointerType::isOpaque)
     });
     constructor = Napi::Persistent(func);
@@ -664,8 +664,8 @@ Napi::Value PointerType::getTypeID(const Napi::CallbackInfo &info) {
     return Napi::Number::New(info.Env(), pointerType->getTypeID());
 }
 
-Napi::Value PointerType::getPointerElementType(const Napi::CallbackInfo &info) {
-    return Type::New(info.Env(), pointerType->getPointerElementType());
+Napi::Value PointerType::getNonOpaquePointerElementType(const Napi::CallbackInfo &info) {
+    return Type::New(info.Env(), pointerType->getNonOpaquePointerElementType());
 }
 
 Napi::Value PointerType::isOpaque(const Napi::CallbackInfo &info) {

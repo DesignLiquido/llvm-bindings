@@ -228,7 +228,7 @@ private:
 
     Napi::Value getTypeID(const Napi::CallbackInfo &info);
 
-    Napi::Value getPointerElementType(const Napi::CallbackInfo &info);
+    Napi::Value getNonOpaquePointerElementType(const Napi::CallbackInfo &info);
 
     Napi::Value isOpaque(const Napi::CallbackInfo &info);
 };
