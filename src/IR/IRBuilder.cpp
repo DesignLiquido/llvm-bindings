@@ -53,6 +53,7 @@ void IRBuilder::Init(Napi::Env env, Napi::Object &exports) {
             InstanceMethod("getDoubleTy", &IRBuilder::getTypeFactory<&LLVMIRBuilder::getDoubleTy>),
             InstanceMethod("getVoidTy", &IRBuilder::getTypeFactory<&LLVMIRBuilder::getVoidTy>),
             InstanceMethod("getInt8PtrTy", &IRBuilder::getInt8PtrTy),
+            InstanceMethod("getPtrTy", &IRBuilder::getPtrTy),
             InstanceMethod("getIntPtrTy", &IRBuilder::getIntPtrTy),
 
             //===--------------------------------------------------------------------===//
@@ -393,6 +394,17 @@ Napi::Value IRBuilder::getInt8PtrTy(const Napi::CallbackInfo &info) {
         return PointerType::New(env, type);
     }
     throw Napi::TypeError::New(env, ErrMsg::Class::IRBuilder::getInt8PtrTy);
+}
+
+Napi::Value IRBuilder::getPtrTy(const Napi::CallbackInfo &info) {
+    Napi::Env env = info.Env();
+    unsigned argsLen = info.Length();
+    if (argsLen == 0 || argsLen == 1 && info[0].IsNumber()) {
+        unsigned addrSpace = argsLen == 1 ? info[0].As<Napi::Number>() : 0;
+        llvm::PointerType *type = builder->getPtrTy(addrSpace);
+        return PointerType::New(env, type);
+    }
+    throw Napi::TypeError::New(env, ErrMsg::Class::IRBuilder::getPtrTy);
 }
 
 Napi::Value IRBuilder::getIntPtrTy(const Napi::CallbackInfo &info) {

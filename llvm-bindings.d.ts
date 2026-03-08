@@ -353,6 +353,8 @@ declare namespace llvm {
 
         public isPointerTy(): boolean;
 
+        public isOpaquePointerTy(): boolean;
+
         public isVectorTy(): boolean;
 
         public isEmptyTy(): boolean;
@@ -491,8 +493,10 @@ declare namespace llvm {
 
     class PointerType extends Type {
         public static get(elementType: Type, addrSpace: number): PointerType;
+        public static get(context: LLVMContext, addrSpace: number): PointerType;
 
         public static getUnqual(elementType: Type): PointerType;
+        public static getUnqual(context: LLVMContext): PointerType;
 
         // duplicated
         public isPointerTy(): boolean;
@@ -511,6 +515,8 @@ declare namespace llvm {
 
         // duplicated
         public getPointerElementType(): Type;
+
+        public isOpaque(): boolean;
 
         protected constructor();
     }
@@ -1419,6 +1425,8 @@ declare namespace llvm {
         public getVoidTy(): Type;
 
         public getInt8PtrTy(addrSpace?: number): PointerType;
+
+        public getPtrTy(addrSpace?: number): PointerType;
 
         public getIntPtrTy(dataLayout: DataLayout, addrSpace?: number): IntegerType;
 

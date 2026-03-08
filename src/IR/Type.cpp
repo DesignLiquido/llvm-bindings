@@ -118,6 +118,7 @@ void Type::Init(Napi::Env env, Napi::Object &exports) {
             InstanceMethod("isStructTy", &Type::isTypeFactory<&llvm::Type::isStructTy>),
             InstanceMethod("isArrayTy", &Type::isTypeFactory<&llvm::Type::isArrayTy>),
             InstanceMethod("isPointerTy", &Type::isTypeFactory<&llvm::Type::isPointerTy>),
+            InstanceMethod("isOpaquePointerTy", &Type::isTypeFactory<&llvm::Type::isOpaquePointerTy>),
             InstanceMethod("isVectorTy", &Type::isTypeFactory<&llvm::Type::isVectorTy>),
             InstanceMethod("isEmptyTy", &Type::isTypeFactory<&llvm::Type::isEmptyTy>),
             InstanceMethod("isFirstClassType", &Type::isTypeFactory<&llvm::Type::isFirstClassType>),
@@ -244,6 +245,9 @@ static bool isSameType(llvm::Type *type1, llvm::Type *type2) {
             }
         }
     } else if (type1->isPointerTy()) {
+        if (type1->isOpaquePointerTy() || type2->isOpaquePointerTy()) {
+            return type1->isOpaquePointerTy() && type2->isOpaquePointerTy();
+        }
         return isSameType(type1->getPointerElementType(), type2->getPointerElementType());
     } else if (type1->isStructTy()) {
         unsigned numElements = type1->getStructNumElements();
