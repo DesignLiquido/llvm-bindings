@@ -74,8 +74,8 @@ namespace ErrMsg {
         }
         namespace PointerType {
             constexpr const char *constructor = "PointerType.constructor needs to be called with new (external: Napi::External<llvm::PointerType>)";
-            constexpr const char *get = "PointerType.get needs to be called with: (elementType: Type, addrSpace: number)";
-            constexpr const char *getUnqual = "PointerType.getUnqual needs to be called with: (elementType: Type)";
+            constexpr const char *get = "PointerType.get needs to be called with: (elementType: Type | context: LLVMContext, addrSpace: number)";
+            constexpr const char *getUnqual = "PointerType.getUnqual needs to be called with: (elementType: Type | context: LLVMContext)";
         }
         namespace Value {
             constexpr const char *constructor = "Value.constructor needs to be called with new (external: Napi::External<llvm::Value>)";
@@ -406,6 +406,7 @@ namespace ErrMsg {
 
             constexpr const char *getIntNTy = "IRBuilder.getIntNTy needs to be called with (numBits: number)";
             constexpr const char *getInt8PtrTy = "IRBuilder.getInt8PtrTy needs to be called with (addrSpace?: number)";
+            constexpr const char *getPtrTy = "IRBuilder.getPtrTy needs to be called with (addrSpace?: number)";
             constexpr const char *getIntPtrTy = "IRBuilder.getIntPtrTy needs to be called with (dataLayout: DataLayout, addrSpace?: number)";
 
             constexpr const char *CreateRet = "IRBuilder.CreateRet needs to be called with: (value: Value)";

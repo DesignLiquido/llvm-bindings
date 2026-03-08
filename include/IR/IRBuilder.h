@@ -179,6 +179,8 @@ private:
 
     Napi::Value getInt8PtrTy(const Napi::CallbackInfo &info);
 
+    Napi::Value getPtrTy(const Napi::CallbackInfo &info);
+
     Napi::Value getIntPtrTy(const Napi::CallbackInfo &info);
 
     //===--------------------------------------------------------------------===//

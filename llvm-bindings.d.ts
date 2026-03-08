@@ -247,7 +247,6 @@ declare namespace llvm {
             VoidTyID: number;
             LabelTyID: number;
             MetadataTyID: number;
-            X86_MMXTyID: number;
             TokenTyID: number;
             IntegerTyID: number;
             FunctionTyID: number;
@@ -277,8 +276,6 @@ declare namespace llvm {
         public static getFP128Ty(context: LLVMContext): Type;
 
         public static getPPC_FP128Ty(context: LLVMContext): Type;
-
-        public static getX86_MMXTy(context: LLVMContext): Type;
 
         public static getTokenTy(context: LLVMContext): Type;
 
@@ -310,8 +307,6 @@ declare namespace llvm {
 
         public static getPPC_FP128PtrTy(context: LLVMContext, addrSpace?: number): PointerType;
 
-        public static getX86_MMXPtrTy(context: LLVMContext, addrSpace?: number): PointerType;
-
         public static getInt1PtrTy(context: LLVMContext, addrSpace?: number): PointerType;
 
         public static getInt8PtrTy(context: LLVMContext, addrSpace?: number): PointerType;
@@ -342,8 +337,6 @@ declare namespace llvm {
 
         public isFloatingPointTy(): boolean;
 
-        public isX86_MMXTy(): boolean;
-
         public isLabelTy(): boolean;
 
         public isMetadataTy(): boolean;
@@ -359,6 +352,8 @@ declare namespace llvm {
         public isArrayTy(): boolean;
 
         public isPointerTy(): boolean;
+
+        public isOpaquePointerTy(): boolean;
 
         public isVectorTy(): boolean;
 
@@ -498,8 +493,10 @@ declare namespace llvm {
 
     class PointerType extends Type {
         public static get(elementType: Type, addrSpace: number): PointerType;
+        public static get(context: LLVMContext, addrSpace: number): PointerType;
 
         public static getUnqual(elementType: Type): PointerType;
+        public static getUnqual(context: LLVMContext): PointerType;
 
         // duplicated
         public isPointerTy(): boolean;
@@ -518,6 +515,8 @@ declare namespace llvm {
 
         // duplicated
         public getPointerElementType(): Type;
+
+        public isOpaque(): boolean;
 
         protected constructor();
     }
@@ -1426,6 +1425,8 @@ declare namespace llvm {
         public getVoidTy(): Type;
 
         public getInt8PtrTy(addrSpace?: number): PointerType;
+
+        public getPtrTy(addrSpace?: number): PointerType;
 
         public getIntPtrTy(dataLayout: DataLayout, addrSpace?: number): IntegerType;
 
