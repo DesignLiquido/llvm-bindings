@@ -1,6 +1,6 @@
 {
     "name": "@designliquido/llvm-bindings",
-    "version": "2.0.0",
+    "version": "1.0.0",
     "description": "LLVM bindings for Node.js/JavaScript/TypeScript",
     "keywords": [
         "llvm",
