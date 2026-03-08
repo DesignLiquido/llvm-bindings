@@ -1,3 +1,14 @@
+# [1.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v0.4.2...v1.0.0) (2026-03-08)
+
+
+### Bug Fixes
+
+* uncomment test entry ([69c93f7](https://github.com/DesignLiquido/llvm-bindings/commit/69c93f7aae697c3cb3e75d01e447554b0565e3d5))
+
+
+### Features
+
+* **Attribute:** add basic support for enum attributes ([#32](https://github.com/DesignLiquido/llvm-bindings/issues/32)) ([db45aa5](https://github.com/DesignLiquido/llvm-bindings/commit/db45aa583729956dfefa01772ab69f019e56b05a))
 ## [1.0.0] - 2026-03-07
 
 ### Added
