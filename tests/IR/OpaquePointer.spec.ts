@@ -1,39 +1,33 @@
 import llvm from '../..';
 
-describe('Test Opaque Pointer (LLVM 17)', () => {
-    test('PointerType.getUnqual returns a pointer type', () => {
+describe('Test Opaque Pointer (LLVM 18)', () => {
+    test('getInt8PtrTy returns a pointer type', () => {
         const context = new llvm.LLVMContext();
-        const ptr = llvm.PointerType.getUnqual(llvm.Type.getInt8Ty(context));
+        const ptr = llvm.Type.getInt8PtrTy(context);
         expect(ptr.isPointerTy()).toBe(true);
     });
 
-    test('PointerType.get(type, addrSpace) returns a pointer type', () => {
+    test('typed ptr factory methods all return pointer types', () => {
         const context = new llvm.LLVMContext();
-        const ptr = llvm.PointerType.get(llvm.Type.getInt8Ty(context), 0);
-        expect(ptr.isPointerTy()).toBe(true);
+        const ptr8 = llvm.Type.getInt8PtrTy(context);
+        const ptr32 = llvm.Type.getInt32PtrTy(context);
+        const ptr64 = llvm.Type.getInt64PtrTy(context);
+        expect(ptr8.isPointerTy()).toBe(true);
+        expect(ptr32.isPointerTy()).toBe(true);
+        expect(ptr64.isPointerTy()).toBe(true);
     });
 
-    test('getUnqual, get(AS0), and getInt8PtrTy all resolve to the same type', () => {
+    test('two pointer types from the same factory call are the same type', () => {
         const context = new llvm.LLVMContext();
-        const a = llvm.PointerType.getUnqual(llvm.Type.getInt8Ty(context));
-        const b = llvm.PointerType.get(llvm.Type.getInt8Ty(context), 0);
-        const c = llvm.Type.getInt8PtrTy(context);
-        expect(llvm.Type.isSameType(a, b)).toBe(true);
-        expect(llvm.Type.isSameType(a, c)).toBe(true);
+        const ptrA = llvm.Type.getInt8PtrTy(context);
+        const ptrB = llvm.Type.getInt8PtrTy(context);
+        expect(llvm.Type.isSameType(ptrA, ptrB)).toBe(true);
     });
 
-    test('pointers in different address spaces are both pointer types', () => {
+    test('pointer type is not the same as integer type', () => {
         const context = new llvm.LLVMContext();
-        const as0 = llvm.PointerType.get(llvm.Type.getInt8Ty(context), 0);
-        const as1 = llvm.PointerType.get(llvm.Type.getInt8Ty(context), 1);
-        expect(as0.isPointerTy()).toBe(true);
-        expect(as1.isPointerTy()).toBe(true);
-        // Note: isSameType does not currently compare address spaces for opaque
-        // pointers — that is a known limitation of the binding's implementation.
+        const ptr = llvm.Type.getInt8PtrTy(context);
+        const int32 = llvm.Type.getInt32Ty(context);
+        expect(llvm.Type.isSameType(ptr, int32)).toBe(false);
     });
-
-    // The following require a binary rebuilt against LLVM 17:
-    //   - PointerType.getUnqual(context)   — context overload
-    //   - PointerType.get(context, addrSpace) — context overload
-    //   - ptr.isOpaque()                   — method not yet registered
 });

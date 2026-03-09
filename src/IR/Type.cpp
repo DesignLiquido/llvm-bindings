@@ -88,18 +88,18 @@ void Type::Init(Napi::Env env, Napi::Object &exports) {
             StaticMethod("getInt32Ty", &getIntTypeFactory<&llvm::Type::getInt32Ty>),
             StaticMethod("getInt64Ty", &getIntTypeFactory<&llvm::Type::getInt64Ty>),
             StaticMethod("getInt128Ty", &getIntTypeFactory<&llvm::Type::getInt128Ty>),
-            StaticMethod("getHalfPtrTy", &getPointerTypeFactory<&llvm::Type::getHalfPtrTy>),
-            StaticMethod("getBFloatPtrTy", &getPointerTypeFactory<&llvm::Type::getBFloatPtrTy>),
-            StaticMethod("getFloatPtrTy", &getPointerTypeFactory<&llvm::Type::getFloatPtrTy>),
-            StaticMethod("getDoublePtrTy", &getPointerTypeFactory<&llvm::Type::getDoublePtrTy>),
-            StaticMethod("getX86_FP80PtrTy", &getPointerTypeFactory<&llvm::Type::getX86_FP80PtrTy>),
-            StaticMethod("getFP128PtrTy", &getPointerTypeFactory<&llvm::Type::getFP128PtrTy>),
-            StaticMethod("getPPC_FP128PtrTy", &getPointerTypeFactory<&llvm::Type::getPPC_FP128PtrTy>),
-            StaticMethod("getInt1PtrTy", &getPointerTypeFactory<&llvm::Type::getInt1PtrTy>),
-            StaticMethod("getInt8PtrTy", &getPointerTypeFactory<&llvm::Type::getInt8PtrTy>),
-            StaticMethod("getInt16PtrTy", &getPointerTypeFactory<&llvm::Type::getInt16PtrTy>),
-            StaticMethod("getInt32PtrTy", &getPointerTypeFactory<&llvm::Type::getInt32PtrTy>),
-            StaticMethod("getInt64PtrTy", &getPointerTypeFactory<&llvm::Type::getInt64PtrTy>),
+            StaticMethod("getHalfPtrTy", &getPointerTypeFactory<&llvm::PointerType::get>),
+            StaticMethod("getBFloatPtrTy", &getPointerTypeFactory<&llvm::PointerType::get>),
+            StaticMethod("getFloatPtrTy", &getPointerTypeFactory<&llvm::PointerType::get>),
+            StaticMethod("getDoublePtrTy", &getPointerTypeFactory<&llvm::PointerType::get>),
+            StaticMethod("getX86_FP80PtrTy", &getPointerTypeFactory<&llvm::PointerType::get>),
+            StaticMethod("getFP128PtrTy", &getPointerTypeFactory<&llvm::PointerType::get>),
+            StaticMethod("getPPC_FP128PtrTy", &getPointerTypeFactory<&llvm::PointerType::get>),
+            StaticMethod("getInt1PtrTy", &getPointerTypeFactory<&llvm::PointerType::get>),
+            StaticMethod("getInt8PtrTy", &getPointerTypeFactory<&llvm::PointerType::get>),
+            StaticMethod("getInt16PtrTy", &getPointerTypeFactory<&llvm::PointerType::get>),
+            StaticMethod("getInt32PtrTy", &getPointerTypeFactory<&llvm::PointerType::get>),
+            StaticMethod("getInt64PtrTy", &getPointerTypeFactory<&llvm::PointerType::get>),
             InstanceMethod("getTypeID", &Type::getTypeID),
             InstanceMethod("isVoidTy", &Type::isTypeFactory<&llvm::Type::isVoidTy>),
             InstanceMethod("isHalfTy", &Type::isTypeFactory<&llvm::Type::isHalfTy>),
@@ -118,7 +118,7 @@ void Type::Init(Napi::Env env, Napi::Object &exports) {
             InstanceMethod("isStructTy", &Type::isTypeFactory<&llvm::Type::isStructTy>),
             InstanceMethod("isArrayTy", &Type::isTypeFactory<&llvm::Type::isArrayTy>),
             InstanceMethod("isPointerTy", &Type::isTypeFactory<&llvm::Type::isPointerTy>),
-            InstanceMethod("isOpaquePointerTy", &Type::isTypeFactory<&llvm::Type::isOpaquePointerTy>),
+            InstanceMethod("isOpaquePointerTy", &Type::isOpaquePointerTy),
             InstanceMethod("isVectorTy", &Type::isTypeFactory<&llvm::Type::isVectorTy>),
             InstanceMethod("isEmptyTy", &Type::isTypeFactory<&llvm::Type::isEmptyTy>),
             InstanceMethod("isFirstClassType", &Type::isTypeFactory<&llvm::Type::isFirstClassType>),
@@ -184,7 +184,7 @@ Napi::Value Type::getPointerTo(const Napi::CallbackInfo &info) {
     if (info.Length() >= 1) {
         addrSpace = info[0].As<Napi::Number>();
     }
-    llvm::PointerType *pointerType = type->getPointerTo(addrSpace);
+    llvm::PointerType *pointerType = llvm::PointerType::get(type->getContext(), addrSpace);
     return PointerType::New(env, pointerType);
 }
 
@@ -216,8 +216,13 @@ Napi::Value Type::isIntegerTy(const Napi::CallbackInfo &info) {
     return Napi::Boolean::New(env, result);
 }
 
+Napi::Value Type::isOpaquePointerTy(const Napi::CallbackInfo &info) {
+    // In LLVM 18+, all pointer types are opaque
+    return Napi::Boolean::New(info.Env(), type->isPointerTy());
+}
+
 Napi::Value Type::getNonOpaquePointerElementType(const Napi::CallbackInfo &info) {
-    return Type::New(info.Env(), type->getNonOpaquePointerElementType());
+    throw Napi::Error::New(info.Env(), "getNonOpaquePointerElementType is not supported in LLVM 18+: all pointers are opaque");
 }
 
 static bool isSameType(llvm::Type *type1, llvm::Type *type2) {
@@ -245,10 +250,10 @@ static bool isSameType(llvm::Type *type1, llvm::Type *type2) {
             }
         }
     } else if (type1->isPointerTy()) {
-        if (type1->isOpaquePointerTy() || type2->isOpaquePointerTy()) {
-            return type1->isOpaquePointerTy() && type2->isOpaquePointerTy();
-        }
-        return isSameType(type1->getNonOpaquePointerElementType(), type2->getNonOpaquePointerElementType());
+        // In LLVM 18+, all pointers are opaque; two pointer types are equal iff they share the same address space
+        auto *ptrType1 = llvm::cast<llvm::PointerType>(type1);
+        auto *ptrType2 = llvm::cast<llvm::PointerType>(type2);
+        return ptrType1->getAddressSpace() == ptrType2->getAddressSpace();
     } else if (type1->isStructTy()) {
         unsigned numElements = type1->getStructNumElements();
         if (numElements != type2->getStructNumElements()) {

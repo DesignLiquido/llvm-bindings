@@ -39,6 +39,8 @@ private:
         return Napi::Boolean::New(info.Env(), (type->*method)());
     }
 
+    Napi::Value isOpaquePointerTy(const Napi::CallbackInfo &info);
+
     Napi::Value getNonOpaquePointerElementType(const Napi::CallbackInfo &info);
 
     static Napi::Value isSameType(const Napi::CallbackInfo &info);

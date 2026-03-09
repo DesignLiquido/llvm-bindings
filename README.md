@@ -28,7 +28,7 @@ listed in the [TypeScript definition file](./llvm-bindings.d.ts).
 
 ```shell
 # install cmake and llvm by homebrew
-brew install cmake llvm@15
+brew install cmake llvm@18
 
 # install llvm-bindings by yarn
 yarn add llvm-bindings
@@ -40,7 +40,7 @@ yarn add llvm-bindings
 #install llvm by installation script
 wget https://apt.llvm.org/llvm.sh
 sudo chmod +x llvm.sh
-sudo ./llvm.sh 15
+sudo ./llvm.sh 18
 
 # install cmake and zlib by apt-get
 sudo apt-get install cmake zlib1g-dev
@@ -51,16 +51,16 @@ yarn add llvm-bindings
 
 ### Install on Windows
 
-First, please refer to [Build LLVM from sources on Windows 10](https://github.com/ApsarasX/llvm-bindings/wiki/Build-LLVM-from-source-code-on-Windows-10) to build LLVM. An alternative is to download [prebuilt LLVM binary](https://github.com/ApsarasX/llvm-windows/releases).
+First, please refer to [Build LLVM from sources on Windows 10](https://github.com/ApsarasX/llvm-bindings/wiki/Build-LLVM-from-source-code-on-Windows-10) to build LLVM. An alternative is to download the [prebuilt LLVM 18 binary for Windows](https://github.com/DesignLiquido/llvm-windows/releases/tag/llvmorg-18.1.8).
 
-Then, find the `llvm-config` command in your LLVM build directory and execute `llvm-config --cmakedir` to get LLVM cmake directory, assuming `C:\Users\dev\llvm-15.0.7.src\build\lib\cmake\llvm`.
+Then, find the `llvm-config` command in your LLVM build directory and execute `llvm-config --cmakedir` to get LLVM cmake directory, assuming `C:\Users\dev\LLVM-18.1.8-win64\lib\cmake\llvm`.
 
 Finally, execute the following commands.
 
 ```shell
 # specify the LLVM cmake directory for cmake-js
 # note: cmake-js reads npm-style config keys
-npm config set cmake_LLVM_DIR C:\Users\dev\llvm-15.0.7.src\build\lib\cmake\llvm
+npm config set cmake_LLVM_DIR C:\Users\dev\LLVM-18.1.8-win64\lib\cmake\llvm
 
 # install llvm-bindings by yarn
 yarn add llvm-bindings
@@ -140,6 +140,41 @@ Typed-pointer code continues to work without changes. The compatibility flag `co
 
 To opt into opaque pointers, pass an `LLVMContext` to `PointerType.get` / `getUnqual` and use `getPtrTy()` for generic pointer values.
 
+## LLVM 16 / v2.0.x
+
+LLVM 16 keeps opaque pointers as the default and retains full typed-pointer support behind the `setOpaquePointers(false)` flag. No API changes were introduced in this library between v1.0.x and v2.0.x beyond the underlying LLVM version bump.
+
+## LLVM 17 / v4.0.x
+
+LLVM 17 removes the `setOpaquePointers` flag and makes opaque pointers mandatory, while still retaining deprecated typed-pointer factory functions. No breaking API changes were made to this library for v4.0.x; the same opaque-pointer APIs introduced in v1.0.0 continued to work.
+
+## LLVM 18 / v5.0.x — Typed Pointers Removed
+
+LLVM 18 **completely removes** typed pointers. All pointer types are now opaque (`ptr`). The following APIs were removed from LLVM and are no longer available:
+
+**Removed APIs**
+
+| Removed API | Replacement |
+|-------------|-------------|
+| `Type.getInt8PtrTy(context)` *(LLVM C++ API)* | `PointerType.get(context, 0)` — this library still exposes `Type.getInt8PtrTy` as a convenience shim |
+| `Type.getInt32PtrTy(context)` and other typed ptr factories | Same: all `get*PtrTy` helpers now return an opaque `ptr` |
+| `Type.isOpaquePointerTy()` | Always returns `true`; use `isPointerTy()` instead |
+| `Type.getNonOpaquePointerElementType()` | Removed — opaque pointers have no element type; throws at runtime |
+| `Type.getPointerTo(addrSpace?)` *(LLVM C++ API)* | `PointerType.get(context, addrSpace)` — this library still exposes `Type.getPointerTo` as a convenience shim |
+| `PointerType.get(elementType, addrSpace)` *(typed overload)* | `PointerType.get(context, addrSpace)` |
+| `PointerType.getUnqual(elementType)` *(typed overload)* | `PointerType.getUnqual(context)` |
+| `PointerType.getNonOpaquePointerElementType()` | Removed — throws at runtime |
+| `PointerType.isOpaque()` | Always returns `true` |
+| `IRBuilder.getInt8PtrTy(addrSpace?)` *(LLVM C++ API)* | `IRBuilder.getPtrTy(addrSpace?)` — this library still exposes `getInt8PtrTy` as a shim |
+
+**Migration guide**
+
+- Replace any `PointerType.get(someType, addrSpace)` calls with `PointerType.get(context, addrSpace)`.
+- Replace any `PointerType.getUnqual(someType)` calls with `PointerType.getUnqual(context)`.
+- Use `isPointerTy()` instead of `isOpaquePointerTy()`.
+- Do not call `getNonOpaquePointerElementType()` — it will throw.
+- The convenience helpers `Type.getInt8PtrTy(context)`, `Type.getInt32PtrTy(context)`, etc. and `IRBuilder.getInt8PtrTy()` are kept as shims that internally call `PointerType.get(context, 0)`.
+
 ## Compatibility
 
 | llvm-bindings versions                     | compatible LLVM versions |
@@ -152,6 +187,7 @@ To opt into opaque pointers, pass an `LLVMContext` to `PointerType.get` / `getUn
 | (@designliquido/llvm-bindings) 1.0.x       | 15.0.x                   |
 | (@designliquido/llvm-bindings) 2.0.x       | 16.0.x                   |
 | (@designliquido/llvm-bindings) 4.0.x       | 17.0.x                   |
+| (@designliquido/llvm-bindings) 5.0.x       | 18.1.x                   |
 
 ## Acknowledgments
 

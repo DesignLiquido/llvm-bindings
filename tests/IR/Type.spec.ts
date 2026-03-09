@@ -7,7 +7,7 @@ describe('Test Type', () => {
         const int32 = llvm.Type.getInt32Ty(context);
         const int32b = llvm.IntegerType.get(context, 32);
         const int8Ptr = llvm.Type.getInt8PtrTy(context);
-        const unqualPtr = llvm.PointerType.getUnqual(llvm.Type.getInt8Ty(context));
+        const unqualPtr = llvm.Type.getInt8PtrTy(context);
         const voidTy = llvm.Type.getVoidTy(context);
 
         expect(llvm.Type.isSameType(int32, int32b)).toBe(true);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <napi.h>
 #include <llvm/IR/IRBuilder.h>
 #include "IR/index.h"
@@ -243,7 +244,12 @@ private:
     // Instruction creation methods: Cast/Conversion Operators
     //===--------------------------------------------------------------------===//
 
-    template<CreateCast method>
+    // Use auto template parameter (C++17) so that cast methods whose signatures
+    // gained extra parameters in LLVM 18 (e.g. CreateZExt gained bool IsNonNeg,
+    // CreateTrunc gained bool IsNUW/IsNSW) are still resolved unambiguously.
+    // Default arguments are NOT carried through function pointers, so we use
+    // if constexpr + std::is_invocable to dispatch based on actual arity.
+    template<auto method>
     Napi::Value CreateCastFactory(const Napi::CallbackInfo &info) {
         Napi::Env env = info.Env();
         unsigned argsLen = info.Length();
@@ -253,7 +259,17 @@ private:
         llvm::Value *value = Value::Extract(info[0]);
         llvm::Type *destType = Type::Extract(info[1]);
         const std::string &name = argsLen >= 3 ? std::string(info[2].As<Napi::String>()) : "";
-        return Value::New(env, (builder->*method)(value, destType, name));
+        using M = decltype(method);
+        using B = llvm::IRBuilderBase *;
+        llvm::Value *result;
+        if constexpr (std::is_invocable_v<M, B, llvm::Value *, llvm::Type *, const llvm::Twine &>) {
+            result = std::invoke(method, builder, value, destType, name);
+        } else if constexpr (std::is_invocable_v<M, B, llvm::Value *, llvm::Type *, const llvm::Twine &, bool>) {
+            result = std::invoke(method, builder, value, destType, name, false);
+        } else if constexpr (std::is_invocable_v<M, B, llvm::Value *, llvm::Type *, const llvm::Twine &, bool, bool>) {
+            result = std::invoke(method, builder, value, destType, name, false, false);
+        }
+        return Value::New(env, result);
     }
 
     Napi::Value CreateIntCast(const Napi::CallbackInfo &info);

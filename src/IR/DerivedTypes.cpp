@@ -381,7 +381,7 @@ Napi::Value StructType::getPointerTo(const Napi::CallbackInfo &info) {
     if (info.Length() >= 1) {
         addrSpace = info[0].As<Napi::Number>();
     }
-    llvm::PointerType *pointerType = structType->getPointerTo(addrSpace);
+    llvm::PointerType *pointerType = llvm::PointerType::get(structType->getContext(), addrSpace);
     return PointerType::New(env, pointerType);
 }
 
@@ -600,38 +600,22 @@ PointerType::PointerType(const Napi::CallbackInfo &info) : ObjectWrap(info) {
 
 Napi::Value PointerType::get(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    if (info.Length() < 2 || !info[1].IsNumber()) {
+    if (info.Length() < 2 || !LLVMContext::IsClassOf(info[0]) || !info[1].IsNumber()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::PointerType::get);
     }
+    llvm::LLVMContext &context = LLVMContext::Extract(info[0]);
     uint32_t addrSpace = info[1].As<Napi::Number>();
-    llvm::PointerType *pointerType;
-    if (LLVMContext::IsClassOf(info[0])) {
-        llvm::LLVMContext &context = LLVMContext::Extract(info[0]);
-        pointerType = llvm::PointerType::get(context, addrSpace);
-    } else if (Type::IsClassOf(info[0])) {
-        llvm::Type *type = Type::Extract(info[0]);
-        pointerType = llvm::PointerType::get(type, addrSpace);
-    } else {
-        throw Napi::TypeError::New(env, ErrMsg::Class::PointerType::get);
-    }
+    llvm::PointerType *pointerType = llvm::PointerType::get(context, addrSpace);
     return PointerType::New(env, pointerType);
 }
 
 Napi::Value PointerType::getUnqual(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    if (info.Length() == 0) {
+    if (info.Length() == 0 || !LLVMContext::IsClassOf(info[0])) {
         throw Napi::TypeError::New(env, ErrMsg::Class::PointerType::getUnqual);
     }
-    llvm::PointerType *pointerType;
-    if (LLVMContext::IsClassOf(info[0])) {
-        llvm::LLVMContext &context = LLVMContext::Extract(info[0]);
-        pointerType = llvm::PointerType::getUnqual(context);
-    } else if (Type::IsClassOf(info[0])) {
-        llvm::Type *type = Type::Extract(info[0]);
-        pointerType = llvm::PointerType::getUnqual(type);
-    } else {
-        throw Napi::TypeError::New(env, ErrMsg::Class::PointerType::getUnqual);
-    }
+    llvm::LLVMContext &context = LLVMContext::Extract(info[0]);
+    llvm::PointerType *pointerType = llvm::PointerType::getUnqual(context);
     return PointerType::New(env, pointerType);
 }
 
@@ -665,9 +649,10 @@ Napi::Value PointerType::getTypeID(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value PointerType::getNonOpaquePointerElementType(const Napi::CallbackInfo &info) {
-    return Type::New(info.Env(), pointerType->getNonOpaquePointerElementType());
+    throw Napi::Error::New(info.Env(), "getNonOpaquePointerElementType is not supported in LLVM 18+: all pointers are opaque");
 }
 
 Napi::Value PointerType::isOpaque(const Napi::CallbackInfo &info) {
-    return Napi::Boolean::New(info.Env(), pointerType->isOpaque());
+    // In LLVM 18+, all pointer types are opaque
+    return Napi::Boolean::New(info.Env(), true);
 }
