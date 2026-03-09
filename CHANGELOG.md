@@ -1,3 +1,4 @@
+# [6.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v5.0.0...v6.0.0) (2026-03-09)
 # [5.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v4.0.0...v5.0.0) (2026-03-09)
 # [4.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v2.0.0...v4.0.0) (2026-03-09)
 # [2.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v1.0.0...v2.0.0) (2026-03-08)
