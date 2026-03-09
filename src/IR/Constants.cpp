@@ -198,7 +198,7 @@ Napi::Value ConstantInt::get(const Napi::CallbackInfo &info) {
 
 Napi::Value ConstantInt::getType(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    llvm::IntegerType *type = constantInt->getType();
+    llvm::IntegerType *type = llvm::cast<llvm::IntegerType>(constantInt->getType());
     return IntegerType::New(env, type);
 }
 
