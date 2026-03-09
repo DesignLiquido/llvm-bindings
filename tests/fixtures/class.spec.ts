@@ -9,7 +9,7 @@ describe('Test Class', () => {
         const elementTypes = [builder.getInt32Ty(), builder.getInt32Ty()];
         const classStructType = llvm.StructType.create(context, elementTypes, 'Person');
 
-        const paramTypes = [llvm.PointerType.getUnqual(classStructType)];
+        const paramTypes = [llvm.Type.getInt8PtrTy(context)];
         const functionType = llvm.FunctionType.get(builder.getVoidTy(), paramTypes, false);
         const func = llvm.Function.Create(functionType, llvm.Function.LinkageTypes.ExternalLinkage, 'class_Person_constructor', module);
 

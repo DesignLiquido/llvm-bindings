@@ -20,9 +20,13 @@ describe('Test Exception', () => {
         const entryBB = llvm.BasicBlock.Create(context, 'entry', mainFunc);
         builder.SetInsertPoint(entryBB);
 
+        // tinfo must be declared first so we can use its pointer type for the BitCast below.
+        // tinfo.getType() is i8** in typed-pointer builds, or ptr in LLVM 18+ opaque builds.
+        const tinfo = new llvm.GlobalVariable(module, builder.getInt8PtrTy(), true, llvm.Function.LinkageTypes.ExternalLinkage, null);
+
         const errMsgStr = builder.CreateGlobalString('error message');
         const tmp1 = builder.CreateCall(allocExceptionFunc, [builder.getInt64(8)]);
-        const tmp2 = builder.CreateBitCast(tmp1, llvm.PointerType.getUnqual(builder.getInt8PtrTy()));
+        const tmp2 = builder.CreateBitCast(tmp1, tinfo.getType());
         builder.CreateStore(
             builder.CreateInBoundsGEP(
                 errMsgStr.getValueType(),
@@ -31,7 +35,6 @@ describe('Test Exception', () => {
             ),
             tmp2
         );
-        const tinfo = new llvm.GlobalVariable(module, builder.getInt8PtrTy(), true, llvm.Function.LinkageTypes.ExternalLinkage, null);
         const tmp3 = builder.CreateBitCast(tinfo, builder.getInt8PtrTy());
         builder.CreateCall(throwFunc, [tmp1, tmp3, llvm.ConstantPointerNull.get(builder.getInt8PtrTy())]);
         builder.CreateUnreachable();

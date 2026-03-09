@@ -492,10 +492,8 @@ declare namespace llvm {
     }
 
     class PointerType extends Type {
-        public static get(elementType: Type, addrSpace: number): PointerType;
         public static get(context: LLVMContext, addrSpace: number): PointerType;
 
-        public static getUnqual(elementType: Type): PointerType;
         public static getUnqual(context: LLVMContext): PointerType;
 
         // duplicated

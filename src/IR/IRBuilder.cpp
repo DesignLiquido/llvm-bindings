@@ -390,7 +390,7 @@ Napi::Value IRBuilder::getInt8PtrTy(const Napi::CallbackInfo &info) {
     unsigned argsLen = info.Length();
     if (argsLen == 0 || argsLen == 1 && info[0].IsNumber()) {
         unsigned addrSpace = argsLen == 1 ? info[0].As<Napi::Number>() : 0;
-        llvm::PointerType *type = builder->getInt8PtrTy(addrSpace);
+        llvm::PointerType *type = builder->getPtrTy(addrSpace);
         return PointerType::New(env, type);
     }
     throw Napi::TypeError::New(env, ErrMsg::Class::IRBuilder::getInt8PtrTy);
