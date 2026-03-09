@@ -54,6 +54,10 @@ typedef llvm::Value *(llvm::IRBuilderBase::*UnaryOperation)(llvm::Value *, const
 
 typedef llvm::Value *(llvm::IRBuilderBase::*UnaryIntOperation)(llvm::Value *, const llvm::Twine &, bool HasNUW, bool HasNSW);
 
+// LLVM 19 removed the HasNUW parameter from CreateNeg; this typedef matches the
+// 3-parameter signature (Value*, Twine&, bool HasNSW) used since LLVM 19.
+typedef llvm::Value *(llvm::IRBuilderBase::*UnaryNSWOperation)(llvm::Value *, const llvm::Twine &, bool HasNSW);
+
 typedef llvm::Value *(llvm::IRBuilderBase::*UnaryFloatOperation)(llvm::Value *, const llvm::Twine &, llvm::MDNode *FPMathTag);
 
 typedef llvm::Value *(llvm::IRBuilderBase::*BinaryOperation)(llvm::Value *, llvm::Value *, const llvm::Twine &);
@@ -221,6 +225,8 @@ private:
     unOpFactoryMacro(UnaryOperation)
 
     unOpFactoryMacro(UnaryIntOperation, false, false)
+
+    unOpFactoryMacro(UnaryNSWOperation, false)
 
     unOpFactoryMacro(UnaryFloatOperation, nullptr)
 

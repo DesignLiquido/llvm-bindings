@@ -28,7 +28,7 @@ listed in the [TypeScript definition file](./llvm-bindings.d.ts).
 
 ```shell
 # install cmake and llvm by homebrew
-brew install cmake llvm@18
+brew install cmake llvm@19
 
 # install llvm-bindings by yarn
 yarn add llvm-bindings
@@ -40,7 +40,7 @@ yarn add llvm-bindings
 #install llvm by installation script
 wget https://apt.llvm.org/llvm.sh
 sudo chmod +x llvm.sh
-sudo ./llvm.sh 18
+sudo ./llvm.sh 19
 
 # install cmake and zlib by apt-get
 sudo apt-get install cmake zlib1g-dev
@@ -51,16 +51,16 @@ yarn add llvm-bindings
 
 ### Install on Windows
 
-First, please refer to [Build LLVM from sources on Windows 10](https://github.com/ApsarasX/llvm-bindings/wiki/Build-LLVM-from-source-code-on-Windows-10) to build LLVM. An alternative is to download the [prebuilt LLVM 18 binary for Windows](https://github.com/DesignLiquido/llvm-windows/releases/tag/llvmorg-18.1.8).
+First, please refer to [Build LLVM from sources on Windows 10](https://github.com/ApsarasX/llvm-bindings/wiki/Build-LLVM-from-source-code-on-Windows-10) to build LLVM. An alternative is to download the [prebuilt LLVM 19 binary for Windows](https://github.com/DesignLiquido/llvm-windows/releases/tag/llvmorg-19.1.7).
 
-Then, find the `llvm-config` command in your LLVM build directory and execute `llvm-config --cmakedir` to get LLVM cmake directory, assuming `C:\Users\dev\LLVM-18.1.8-win64\lib\cmake\llvm`.
+Then, find the `llvm-config` command in your LLVM build directory and execute `llvm-config --cmakedir` to get LLVM cmake directory, assuming `C:\Users\dev\LLVM-19.1.7-win64\lib\cmake\llvm`.
 
 Finally, execute the following commands.
 
 ```shell
 # specify the LLVM cmake directory for cmake-js
 # note: cmake-js reads npm-style config keys
-npm config set cmake_LLVM_DIR C:\Users\dev\LLVM-18.1.8-win64\lib\cmake\llvm
+npm config set cmake_LLVM_DIR C:\Users\dev\LLVM-19.1.7-win64\lib\cmake\llvm
 
 # install llvm-bindings by yarn
 yarn add llvm-bindings
@@ -175,6 +175,14 @@ LLVM 18 **completely removes** typed pointers. All pointer types are now opaque 
 - Do not call `getNonOpaquePointerElementType()` — it will throw.
 - The convenience helpers `Type.getInt8PtrTy(context)`, `Type.getInt32PtrTy(context)`, etc. and `IRBuilder.getInt8PtrTy()` are kept as shims that internally call `PointerType.get(context, 0)`.
 
+## LLVM 19 / v6.0.x
+
+LLVM 19 introduces two internal changes that required C++ binding updates, but the JavaScript/TypeScript API surface is unchanged:
+
+- **RemoveDIs (new debug-info format)**: LLVM 19 defaults to a non-intrinsic debug-info representation where `DIBuilder.insertDeclare` and `DIBuilder.insertDbgValueIntrinsic` return a `DbgRecord*` instead of an `Instruction*`. This library forces the classic intrinsic-based format on the module when a `DIBuilder` is constructed, so both methods continue to return an `Instruction` as documented.
+- **`CreateNeg` signature change**: `IRBuilder.CreateNeg` dropped its `HasNUW` parameter (negation cannot overflow in the unsigned direction); it now accepts only `(value, name?, hasNSW?)`. The binding is updated accordingly; the JavaScript API is unchanged.
+
+
 ## Compatibility
 
 | llvm-bindings versions                     | compatible LLVM versions |
@@ -188,6 +196,7 @@ LLVM 18 **completely removes** typed pointers. All pointer types are now opaque 
 | (@designliquido/llvm-bindings) 2.0.x       | 16.0.x                   |
 | (@designliquido/llvm-bindings) 4.0.x       | 17.0.x                   |
 | (@designliquido/llvm-bindings) 5.0.x       | 18.1.x                   |
+| (@designliquido/llvm-bindings) 6.0.x       | 19.1.x                   |
 
 ## Acknowledgments
 

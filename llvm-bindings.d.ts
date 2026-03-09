@@ -1464,19 +1464,35 @@ declare namespace llvm {
 
         public CreateAdd(lhs: Value, rhs: Value, name?: string): Value;
 
+        public CreateNSWAdd(lhs: Value, rhs: Value, name?: string): Value;
+
+        public CreateNUWAdd(lhs: Value, rhs: Value, name?: string): Value;
+
         public CreateFAdd(lhs: Value, rhs: Value, name?: string): Value;
 
         public CreateSub(lhs: Value, rhs: Value, name?: string): Value;
+
+        public CreateNSWSub(lhs: Value, rhs: Value, name?: string): Value;
+
+        public CreateNUWSub(lhs: Value, rhs: Value, name?: string): Value;
 
         public CreateFSub(lhs: Value, rhs: Value, name?: string): Value;
 
         public CreateMul(lhs: Value, rhs: Value, name?: string): Value;
 
+        public CreateNSWMul(lhs: Value, rhs: Value, name?: string): Value;
+
+        public CreateNUWMul(lhs: Value, rhs: Value, name?: string): Value;
+
         public CreateFMul(lhs: Value, rhs: Value, name?: string): Value;
 
         public CreateSDiv(lhs: Value, rhs: Value, name?: string): Value;
 
+        public CreateExactSDiv(lhs: Value, rhs: Value, name?: string): Value;
+
         public CreateUDiv(lhs: Value, rhs: Value, name?: string): Value;
+
+        public CreateExactUDiv(lhs: Value, rhs: Value, name?: string): Value;
 
         public CreateFDiv(lhs: Value, rhs: Value, name?: string): Value;
 
@@ -1500,9 +1516,13 @@ declare namespace llvm {
 
         public CreateNeg(value: Value, name?: string): Value;
 
+        public CreateNSWNeg(value: Value, name?: string): Value;
+
         public CreateFNeg(value: Value, name?: string): Value;
 
         public CreateNot(value: Value, name?: string): Value;
+
+        public CreateFreeze(value: Value, name?: string): Value;
 
 
         //===--------------------------------------------------------------------===//
