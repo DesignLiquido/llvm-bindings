@@ -250,8 +250,10 @@ static bool isSameType(llvm::Type *type1, llvm::Type *type2) {
             }
         }
     } else if (type1->isPointerTy()) {
-        // In LLVM 18+, all pointers are opaque; two pointer types with the same address space are equal
-        return true;
+        // In LLVM 18+, all pointers are opaque; two pointer types are equal iff they share the same address space
+        auto *ptrType1 = llvm::cast<llvm::PointerType>(type1);
+        auto *ptrType2 = llvm::cast<llvm::PointerType>(type2);
+        return ptrType1->getAddressSpace() == ptrType2->getAddressSpace();
     } else if (type1->isStructTy()) {
         unsigned numElements = type1->getStructNumElements();
         if (numElements != type2->getStructNumElements()) {

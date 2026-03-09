@@ -146,7 +146,7 @@ LLVM 16 keeps opaque pointers as the default and retains full typed-pointer supp
 
 ## LLVM 17 / v4.0.x
 
-LLVM 17 continues to support typed pointers via `setOpaquePointers(false)` but deprecates all typed-pointer factory functions. No breaking API changes were made to this library for v4.0.x; the same opaque-pointer APIs introduced in v1.0.0 continued to work.
+LLVM 17 removes the `setOpaquePointers` flag and makes opaque pointers mandatory, while still retaining deprecated typed-pointer factory functions. No breaking API changes were made to this library for v4.0.x; the same opaque-pointer APIs introduced in v1.0.0 continued to work.
 
 ## LLVM 18 / v5.0.x — Typed Pointers Removed
 
@@ -160,7 +160,7 @@ LLVM 18 **completely removes** typed pointers. All pointer types are now opaque 
 | `Type.getInt32PtrTy(context)` and other typed ptr factories | Same: all `get*PtrTy` helpers now return an opaque `ptr` |
 | `Type.isOpaquePointerTy()` | Always returns `true`; use `isPointerTy()` instead |
 | `Type.getNonOpaquePointerElementType()` | Removed — opaque pointers have no element type; throws at runtime |
-| `Type.getPointerTo(addrSpace?)` | `PointerType.get(context, addrSpace)` |
+| `Type.getPointerTo(addrSpace?)` *(LLVM C++ API)* | `PointerType.get(context, addrSpace)` — this library still exposes `Type.getPointerTo` as a convenience shim |
 | `PointerType.get(elementType, addrSpace)` *(typed overload)* | `PointerType.get(context, addrSpace)` |
 | `PointerType.getUnqual(elementType)` *(typed overload)* | `PointerType.getUnqual(context)` |
 | `PointerType.getNonOpaquePointerElementType()` | Removed — throws at runtime |

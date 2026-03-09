@@ -21,7 +21,7 @@ describe('Test Exception', () => {
         builder.SetInsertPoint(entryBB);
 
         // tinfo must be declared first so we can use its pointer type for the BitCast below.
-        // tinfo.getType() is i8** in typed-pointer builds, or ptr in LLVM 18+ opaque builds.
+        // In LLVM 18+, tinfo.getType() returns the opaque `ptr` type.
         const tinfo = new llvm.GlobalVariable(module, builder.getInt8PtrTy(), true, llvm.Function.LinkageTypes.ExternalLinkage, null);
 
         const errMsgStr = builder.CreateGlobalString('error message');
