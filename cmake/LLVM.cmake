@@ -7,7 +7,24 @@ if (CMAKE_HOST_APPLE)
     endforeach ()
 endif ()
 
-find_package(LLVM 18 REQUIRED CONFIG)
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+    # Ubuntu apt-installed LLVM packages place cmake files under /usr/lib/llvm-X/cmake/
+    # Enumerate installed versions so CMake can find them regardless of version compat quirks
+    file(GLOB LLVM_DIRS_LINUX /usr/lib/llvm-*)
+    foreach (LLVM_DIR ${LLVM_DIRS_LINUX})
+        list(APPEND CMAKE_PREFIX_PATH ${LLVM_DIR}/cmake)
+        list(APPEND CMAKE_PREFIX_PATH ${LLVM_DIR}/lib/cmake/llvm)
+    endforeach ()
+endif ()
+
+# Do not pass a version to find_package: Ubuntu's apt LLVM cmake config files use strict
+# version matching that rejects "18" when the installed patch version is "18.1.x".
+# We enforce the minimum version manually after the package is found.
+find_package(LLVM REQUIRED CONFIG)
+
+if (LLVM_PACKAGE_VERSION VERSION_LESS "18")
+    message(FATAL_ERROR "LLVM 18 or later is required. Found: ${LLVM_PACKAGE_VERSION}")
+endif ()
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 
