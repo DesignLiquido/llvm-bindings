@@ -243,7 +243,10 @@ private:
     // Instruction creation methods: Cast/Conversion Operators
     //===--------------------------------------------------------------------===//
 
-    template<CreateCast method>
+    // Use auto template parameter (C++17) so that cast methods whose signatures
+    // gained extra optional parameters in LLVM 18 (e.g. CreateZExt, CreateTrunc)
+    // are still resolved unambiguously without requiring an exact typedef match.
+    template<auto method>
     Napi::Value CreateCastFactory(const Napi::CallbackInfo &info) {
         Napi::Env env = info.Env();
         unsigned argsLen = info.Length();
