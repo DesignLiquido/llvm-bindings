@@ -1,0 +1,44 @@
+import llvm from '../..';
+
+describe('Test Unary', () => {
+    test('builds and verifies valid IR for unary not/neg/fneg', () => {
+        const context = new llvm.LLVMContext();
+        const module = new llvm.Module('unary', context);
+        const builder = new llvm.IRBuilder(context);
+
+        const functionType = llvm.FunctionType.get(builder.getVoidTy(), false);
+        const func = llvm.Function.Create(functionType, llvm.Function.LinkageTypes.ExternalLinkage, 'unary', module);
+
+        const entryBB = llvm.BasicBlock.Create(context, 'entry', func);
+        builder.SetInsertPoint(entryBB);
+
+        const boolAlloca = builder.CreateAlloca(builder.getInt1Ty(), null, 'bool_alloca');
+        builder.CreateStore(builder.getFalse(), boolAlloca);
+        const boolValue = builder.CreateLoad(builder.getInt1Ty(), boolAlloca, 'bool_value');
+        const notBoolValue = builder.CreateNot(boolValue, 'not_bool_value');
+        builder.CreateStore(notBoolValue, boolAlloca);
+
+        const flagAlloca = builder.CreateAlloca(builder.getInt64Ty(), null, 'flag_alloca');
+        builder.CreateStore(builder.getInt64(123), flagAlloca);
+        const flagValue = builder.CreateLoad(builder.getInt64Ty(), flagAlloca, 'flag_value');
+        const notFlagValue = builder.CreateNot(flagValue, 'not_flag_value');
+        builder.CreateStore(notFlagValue, flagAlloca);
+
+        const integerAlloca = builder.CreateAlloca(builder.getInt64Ty(), null, 'integer_alloca');
+        builder.CreateStore(builder.getInt64(233), integerAlloca);
+        const integerValue = builder.CreateLoad(builder.getInt64Ty(), integerAlloca, 'integer_value');
+        const negIntegerValue = builder.CreateNeg(integerValue, 'neg_integer_value');
+        builder.CreateStore(negIntegerValue, integerAlloca);
+
+        const floatAlloca = builder.CreateAlloca(builder.getDoubleTy(), null, 'float_alloca');
+        builder.CreateStore(llvm.ConstantFP.get(builder.getDoubleTy(), 11.1), floatAlloca);
+        const floatValue = builder.CreateLoad(builder.getDoubleTy(), floatAlloca, 'float_value');
+        const negFloatValue = builder.CreateFNeg(floatValue, 'neg_float_value');
+        builder.CreateStore(negFloatValue, floatAlloca);
+
+        builder.CreateRetVoid();
+
+        expect(llvm.verifyFunction(func)).toBe(false);
+        expect(llvm.verifyModule(module)).toBe(false);
+    });
+});

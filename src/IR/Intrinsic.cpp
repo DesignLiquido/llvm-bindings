@@ -81,7 +81,6 @@ void Intrinsic::Init(Napi::Env env, Napi::Object &exports) {
     intrinsicNS.Set("ctlz", Napi::Number::New(env, llvm::Intrinsic::ctlz));
     intrinsicNS.Set("ctpop", Napi::Number::New(env, llvm::Intrinsic::ctpop));
     intrinsicNS.Set("cttz", Napi::Number::New(env, llvm::Intrinsic::cttz));
-    intrinsicNS.Set("dbg_addr", Napi::Number::New(env, llvm::Intrinsic::dbg_addr));
     intrinsicNS.Set("dbg_declare", Napi::Number::New(env, llvm::Intrinsic::dbg_declare));
     intrinsicNS.Set("dbg_label", Napi::Number::New(env, llvm::Intrinsic::dbg_label));
     intrinsicNS.Set("dbg_value", Napi::Number::New(env, llvm::Intrinsic::dbg_value));
