@@ -275,10 +275,10 @@ Napi::Value DIBuilder::insertDeclare(const Napi::CallbackInfo &info) {
         llvm::DILocation *location = DILocation::Extract(info[3]);
         if (BasicBlock::IsClassOf(info[4])) {
             llvm::BasicBlock *insertBB = BasicBlock::Extract(info[4]);
-            instruction = builder->insertDeclare(storage, variable, expr, location, insertBB);
+            instruction = builder->insertDeclare(storage, variable, expr, location, insertBB).dyn_cast<llvm::Instruction *>();
         } else if (Instruction::IsClassOf(info[4])) {
             llvm::Instruction *insertBefore = Instruction::Extract(info[4]);
-            instruction = builder->insertDeclare(storage, variable, expr, location, insertBefore);
+            instruction = builder->insertDeclare(storage, variable, expr, location, insertBefore).dyn_cast<llvm::Instruction *>();
         }
     }
     if (instruction) {
@@ -301,10 +301,10 @@ Napi::Value DIBuilder::insertDbgValueIntrinsic(const Napi::CallbackInfo &info) {
         llvm::DILocation *location = DILocation::Extract(info[3]);
         if (BasicBlock::IsClassOf(info[4])) {
             llvm::BasicBlock *insertBB = BasicBlock::Extract(info[4]);
-            instruction = builder->insertDbgValueIntrinsic(value, variable, expr, location, insertBB);
+            instruction = builder->insertDbgValueIntrinsic(value, variable, expr, location, insertBB).dyn_cast<llvm::Instruction *>();
         } else if (Instruction::IsClassOf(info[4])) {
             llvm::Instruction *insertBefore = Instruction::Extract(info[4]);
-            instruction = builder->insertDbgValueIntrinsic(value, variable, expr, location, insertBefore);
+            instruction = builder->insertDbgValueIntrinsic(value, variable, expr, location, insertBefore).dyn_cast<llvm::Instruction *>();
         }
     }
     if (instruction) {
