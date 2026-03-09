@@ -92,9 +92,19 @@ void IRBuilder::Init(Napi::Env env, Napi::Object &exports) {
             InstanceMethod("CreateShl", &IRBuilder::binOpFactory<&LLVMIRBuilder::CreateShl>),
             InstanceMethod("CreateAShr", &IRBuilder::binOpFactory<&LLVMIRBuilder::CreateAShr>),
             InstanceMethod("CreateLShr", &IRBuilder::binOpFactory<&LLVMIRBuilder::CreateLShr>),
+            InstanceMethod("CreateNSWAdd", &IRBuilder::binOpFactory<static_cast<BinaryOperation>(&LLVMIRBuilder::CreateNSWAdd)>),
+            InstanceMethod("CreateNUWAdd", &IRBuilder::binOpFactory<static_cast<BinaryOperation>(&LLVMIRBuilder::CreateNUWAdd)>),
+            InstanceMethod("CreateNSWSub", &IRBuilder::binOpFactory<static_cast<BinaryOperation>(&LLVMIRBuilder::CreateNSWSub)>),
+            InstanceMethod("CreateNUWSub", &IRBuilder::binOpFactory<static_cast<BinaryOperation>(&LLVMIRBuilder::CreateNUWSub)>),
+            InstanceMethod("CreateNSWMul", &IRBuilder::binOpFactory<static_cast<BinaryOperation>(&LLVMIRBuilder::CreateNSWMul)>),
+            InstanceMethod("CreateNUWMul", &IRBuilder::binOpFactory<static_cast<BinaryOperation>(&LLVMIRBuilder::CreateNUWMul)>),
+            InstanceMethod("CreateExactSDiv", &IRBuilder::binOpFactory<static_cast<BinaryOperation>(&LLVMIRBuilder::CreateExactSDiv)>),
+            InstanceMethod("CreateExactUDiv", &IRBuilder::binOpFactory<static_cast<BinaryOperation>(&LLVMIRBuilder::CreateExactUDiv)>),
             InstanceMethod("CreateNeg", &IRBuilder::unOpFactory<static_cast<UnaryNSWOperation>(&LLVMIRBuilder::CreateNeg)>),
+            InstanceMethod("CreateNSWNeg", &IRBuilder::unOpFactory<static_cast<UnaryOperation>(&LLVMIRBuilder::CreateNSWNeg)>),
             InstanceMethod("CreateFNeg", &IRBuilder::unOpFactory<&LLVMIRBuilder::CreateFNeg>),
             InstanceMethod("CreateNot", &IRBuilder::unOpFactory<&LLVMIRBuilder::CreateNot>),
+            InstanceMethod("CreateFreeze", &IRBuilder::unOpFactory<static_cast<UnaryOperation>(&LLVMIRBuilder::CreateFreeze)>),
 
             //===--------------------------------------------------------------------===//
             // Instruction creation methods: Memory Instructions

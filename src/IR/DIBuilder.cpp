@@ -50,6 +50,12 @@ DIBuilder::DIBuilder(const Napi::CallbackInfo &info) : ObjectWrap(info) {
             return;
         } else if (Module::IsClassOf(info[0])) {
             llvm::Module *module = Module::Extract(info[0]);
+            // LLVM 19 defaults to the new non-intrinsic ("RemoveDIs") debug info
+            // format, where insertDeclare / insertDbgValueIntrinsic return a
+            // DbgRecord* instead of an Instruction*.  Force the classic
+            // intrinsic-based format so that our bindings keep returning
+            // Instruction* as documented.
+            module->setIsNewDbgInfoFormat(false);
             builder = new llvm::DIBuilder(*module);
             return;
         }

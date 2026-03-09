@@ -177,7 +177,10 @@ LLVM 18 **completely removes** typed pointers. All pointer types are now opaque 
 
 ## LLVM 19 / v6.0.x
 
-LLVM 19 continues with mandatory opaque pointers and does not introduce breaking API changes relative to LLVM 18 for the APIs exposed by this library. No API changes were made to this library for v6.0.x beyond the underlying LLVM version bump.
+LLVM 19 introduces two internal changes that required C++ binding updates, but the JavaScript/TypeScript API surface is unchanged:
+
+- **RemoveDIs (new debug-info format)**: LLVM 19 defaults to a non-intrinsic debug-info representation where `DIBuilder.insertDeclare` and `DIBuilder.insertDbgValueIntrinsic` return a `DbgRecord*` instead of an `Instruction*`. This library forces the classic intrinsic-based format on the module when a `DIBuilder` is constructed, so both methods continue to return an `Instruction` as documented.
+- **`CreateNeg` signature change**: `IRBuilder.CreateNeg` dropped its `HasNUW` parameter (negation cannot overflow in the unsigned direction); it now accepts only `(value, name?, hasNSW?)`. The binding is updated accordingly; the JavaScript API is unchanged.
 
 
 ## Compatibility
