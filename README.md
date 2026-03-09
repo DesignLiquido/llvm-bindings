@@ -151,6 +151,7 @@ To opt into opaque pointers, pass an `LLVMContext` to `PointerType.get` / `getUn
 | (@designliquido/llvm-bindings) 0.1.x       | 14.0.x                   |
 | (@designliquido/llvm-bindings) 1.0.x       | 15.0.x                   |
 | (@designliquido/llvm-bindings) 2.0.x       | 16.0.x                   |
+| (@designliquido/llvm-bindings) 4.0.x       | 17.0.x                   |
 
 ## Acknowledgments
 
