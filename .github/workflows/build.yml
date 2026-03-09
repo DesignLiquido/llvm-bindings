@@ -68,14 +68,17 @@ jobs:
           "LLVM_CMAKE_DIR=$LLVM_CMAKE_DIR" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Install Dependencies
         run: npm install --ignore-scripts
-      - name: Configure cmake-js LLVM path on macOS
-        if: startsWith(matrix.os, 'macos')
-        run: npm config set cmake_LLVM_DIR "$LLVM_CMAKE_DIR"
-      - name: CMake Build Debug and Test
-        if: startsWith(matrix.os, 'windows') == false
+      - name: CMake Build Debug and Test on Linux
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           npm run clear
           npm run build:debug
+          npm test
+      - name: CMake Build Debug and Test on macOS
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          npm run clear
+          npx cmake-js build -D "--CDLLVM_DIR=$LLVM_CMAKE_DIR"
           npm test
       - name: CMake Build Release and Test on Windows
         if: startsWith(matrix.os, 'windows')
@@ -84,11 +87,17 @@ jobs:
           npx cmake-js print-configure "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL'
           npx cmake-js build "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL'
           npm test
-      - name: CMake Build Release and Test on non-Windows
-        if: startsWith(matrix.os, 'windows') == false
+      - name: CMake Build Release and Test on Linux
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           npm run clear
           npm run build:release
+          npm test
+      - name: CMake Build Release and Test on macOS
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          npm run clear
+          npx cmake-js build "--CDLLVM_DIR=$LLVM_CMAKE_DIR"
           npm test
 
   build-pr:
@@ -140,14 +149,17 @@ jobs:
           "LLVM_CMAKE_DIR=$LLVM_CMAKE_DIR" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Install Dependencies
         run: npm install --ignore-scripts
-      - name: Configure cmake-js LLVM path on macOS
-        if: startsWith(matrix.os, 'macos')
-        run: npm config set cmake_LLVM_DIR "$LLVM_CMAKE_DIR"
-      - name: CMake Build Debug and Test
-        if: startsWith(matrix.os, 'windows') == false
+      - name: CMake Build Debug and Test on Linux
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           npm run clear
           npm run build:debug
+          npm test
+      - name: CMake Build Debug and Test on macOS
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          npm run clear
+          npx cmake-js build -D "--CDLLVM_DIR=$LLVM_CMAKE_DIR"
           npm test
       - name: CMake Build Release and Test on Windows
         if: startsWith(matrix.os, 'windows')
@@ -156,9 +168,16 @@ jobs:
           npx cmake-js print-configure "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL'
           npx cmake-js build "--CDLLVM_DIR=$env:LLVM_CMAKE_DIR" '--CDCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL'
           npm test
-      - name: CMake Build Release and Test on non-Windows
-        if: startsWith(matrix.os, 'windows') == false
+      - name: CMake Build Release and Test on Linux
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           npm run clear
           npm run build:release
           npm test
+      - name: CMake Build Release and Test on macOS
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          npm run clear
+          npx cmake-js build "--CDLLVM_DIR=$LLVM_CMAKE_DIR"
+          npm test
+
