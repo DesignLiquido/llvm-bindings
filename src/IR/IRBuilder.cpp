@@ -652,9 +652,10 @@ Napi::Value IRBuilder::CreateInBoundsGEP(const Napi::CallbackInfo &info) {
         llvm::Type *type = Type::Extract(info[0]);
         llvm::Value *ptr = Value::Extract(info[1]);
         const std::string &name = argsLen >= 4 ? std::string(info[3].As<Napi::String>()) : "";
-        // When nuw=true, applies all flags (inbounds + nusw + nuw).
+        // When nuw=true, applies inbounds + nuw (but not nusw).
         bool nuw = argsLen >= 5 && info[4].As<Napi::Boolean>().Value();
-        llvm::GEPNoWrapFlags flags = nuw ? llvm::GEPNoWrapFlags::all() : llvm::GEPNoWrapFlags::inBounds();
+        llvm::GEPNoWrapFlags flags = nuw ? (llvm::GEPNoWrapFlags::inBounds() | llvm::GEPNoWrapFlags::nuw())
+                                         : llvm::GEPNoWrapFlags::inBounds();
         if (Value::IsClassOf(info[2])) {
             llvm::Value *idx = Value::Extract(info[2]);
             return Value::New(env, builder->CreateGEP(type, ptr, idx, name, flags));
