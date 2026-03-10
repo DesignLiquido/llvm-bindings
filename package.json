@@ -31,7 +31,7 @@
         "build:debug": "cmake-js build -D",
         "build:release": "cmake-js build",
         "clear": "yarn rimraf build dist",
-        "test": "yarn build:ts && yarn jest --verbose",
+        "test": "yarn build:ts && yarn jest --coverage",
         "release:patch": "release-it patch",
         "release:minor": "release-it minor",
         "release:major": "release-it major"
@@ -53,7 +53,13 @@
         "typescript": "^5.9.3"
     },
     "jest": {
-        "preset": "ts-jest"
+        "preset": "ts-jest",
+        "coverageReporters": [
+            "json-summary",
+            "lcov",
+            "text",
+            "text-summary"
+        ]
     },
     "release-it": {
         "git": {

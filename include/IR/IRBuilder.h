@@ -301,4 +301,6 @@ private:
     //===--------------------------------------------------------------------===//
 
     Napi::Value CreatePtrDiff(const Napi::CallbackInfo &info);
+
+    Napi::Value CreateAtomicRMW(const Napi::CallbackInfo &info);
 };

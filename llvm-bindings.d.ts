@@ -118,7 +118,6 @@ declare namespace llvm {
             NoAlias: number;
             NoBuiltin: number;
             NoCallback: number;
-            NoCapture: number;
             NoCfCheck: number;
             NoDuplicate: number;
             NoFree: number;
@@ -905,6 +904,28 @@ declare namespace llvm {
     }
 
     class AtomicRMWInst extends Instruction {
+        public static readonly BinOp: {
+            Xchg: number;
+            Add: number;
+            Sub: number;
+            And: number;
+            Nand: number;
+            Or: number;
+            Xor: number;
+            Max: number;
+            Min: number;
+            UMax: number;
+            UMin: number;
+            FAdd: number;
+            FSub: number;
+            FMax: number;
+            FMin: number;
+            FMaximum: number; // new in LLVM 21
+            FMinimum: number; // new in LLVM 21
+        };
+
+        public getOperation(): number;
+
         // duplicated
         public getType(): Type;
 
@@ -925,6 +946,10 @@ declare namespace llvm {
     }
 
     class ICmpInst extends Instruction {
+        public getSameSign(): boolean;
+
+        public setSameSign(value: boolean): void;
+
         // duplicated
         public getType(): Type;
 
@@ -1674,6 +1699,14 @@ declare namespace llvm {
         public CreateIsNotNull(value: Value, name?: string): Value;
 
         public CreatePtrDiff(elemType: Type, lhs: Value, rhs: Value, name?: string): Value;
+
+        public CreateAtomicRMW(
+            op: number,
+            ptr: Value,
+            val: Value,
+            align: number,
+            ordering: number
+        ): AtomicRMWInst;
     }
 
     namespace IRBuilder {

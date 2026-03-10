@@ -188,7 +188,9 @@ void IRBuilder::Init(Napi::Env env, Napi::Object &exports) {
             //===--------------------------------------------------------------------===//
 
             InstanceMethod("CreateIsNull", &IRBuilder::unOpFactory<&LLVMIRBuilder::CreateIsNull>),
-            InstanceMethod("CreateIsNotNull", &IRBuilder::unOpFactory<&LLVMIRBuilder::CreateIsNotNull>)
+            InstanceMethod("CreateIsNotNull", &IRBuilder::unOpFactory<&LLVMIRBuilder::CreateIsNotNull>),
+            InstanceMethod("CreatePtrDiff", &IRBuilder::CreatePtrDiff),
+            InstanceMethod("CreateAtomicRMW", &IRBuilder::CreateAtomicRMW)
     });
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
@@ -869,4 +871,18 @@ Napi::Value IRBuilder::CreatePtrDiff(const Napi::CallbackInfo &info) {
         return Value::New(env, diff);
     }
     throw Napi::TypeError::New(env, ErrMsg::Class::IRBuilder::CreatePtrDiff);
+}
+
+Napi::Value IRBuilder::CreateAtomicRMW(const Napi::CallbackInfo &info) {
+    Napi::Env env = info.Env();
+    if (info.Length() == 5 && info[0].IsNumber() && Value::IsClassOf(info[1]) && Value::IsClassOf(info[2]) && info[3].IsNumber() && info[4].IsNumber()) {
+        auto op = static_cast<llvm::AtomicRMWInst::BinOp>(info[0].As<Napi::Number>().Int32Value());
+        llvm::Value *ptr = Value::Extract(info[1]);
+        llvm::Value *val = Value::Extract(info[2]);
+        unsigned align = info[3].As<Napi::Number>().Uint32Value();
+        auto ordering = static_cast<llvm::AtomicOrdering>(info[4].As<Napi::Number>().Int32Value());
+        llvm::AtomicRMWInst *inst = builder->CreateAtomicRMW(op, ptr, val, llvm::MaybeAlign(align), ordering);
+        return AtomicRMWInst::New(env, inst);
+    }
+    throw Napi::TypeError::New(env, ErrMsg::Class::IRBuilder::CreateAtomicRMW);
 }

@@ -155,6 +155,8 @@ private:
     Napi::Value getType(const Napi::CallbackInfo &info);
 
     void setDebugLoc(const Napi::CallbackInfo &info);
+
+    Napi::Value getOperation(const Napi::CallbackInfo &info);
 };
 
 class GetElementPtrInst : public Napi::ObjectWrap<GetElementPtrInst> {
@@ -203,6 +205,10 @@ private:
     Napi::Value getType(const Napi::CallbackInfo &info);
 
     void setDebugLoc(const Napi::CallbackInfo &info);
+
+    Napi::Value getSameSign(const Napi::CallbackInfo &info);
+
+    void setSameSign(const Napi::CallbackInfo &info);
 };
 
 class FCmpInst : public Napi::ObjectWrap<FCmpInst> {

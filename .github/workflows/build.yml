@@ -15,8 +15,8 @@ on:
       - 'LICENSE'
 
 env:
-  LLVM_VERSION: 20.1.8
-  LLVM_VERSION_MAJOR: 20
+  LLVM_VERSION: 21.1.8
+  LLVM_VERSION_MAJOR: 21
 
 jobs:
   build-push:
