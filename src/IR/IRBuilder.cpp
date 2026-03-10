@@ -644,16 +644,22 @@ Napi::Value IRBuilder::CreateInBoundsGEP(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
     unsigned argsLen = info.Length();
     std::vector<llvm::Value *> idxList;
-    if (argsLen == 3 && Type::IsClassOf(info[0]) && Value::IsClassOf(info[1]) ||
-        argsLen == 4 && Type::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && info[3].IsString()) {
+    // Accepts: (type, ptr, idxs[, name[, nuw]])
+    if ((argsLen >= 3 && argsLen <= 5) &&
+        Type::IsClassOf(info[0]) && Value::IsClassOf(info[1]) &&
+        (argsLen < 4 || info[3].IsString()) &&
+        (argsLen < 5 || info[4].IsBoolean())) {
         llvm::Type *type = Type::Extract(info[0]);
         llvm::Value *ptr = Value::Extract(info[1]);
         const std::string &name = argsLen >= 4 ? std::string(info[3].As<Napi::String>()) : "";
+        // When nuw=true, applies all flags (inbounds + nusw + nuw).
+        bool nuw = argsLen >= 5 && info[4].As<Napi::Boolean>().Value();
+        llvm::GEPNoWrapFlags flags = nuw ? llvm::GEPNoWrapFlags::all() : llvm::GEPNoWrapFlags::inBounds();
         if (Value::IsClassOf(info[2])) {
             llvm::Value *idx = Value::Extract(info[2]);
-            return Value::New(env, builder->CreateInBoundsGEP(type, ptr, idx, name));
+            return Value::New(env, builder->CreateGEP(type, ptr, idx, name, flags));
         } else if (info[2].IsArray() && assembleArray<WrappedValue>(info[2].As<Napi::Array>(), idxList)) {
-            return Value::New(env, builder->CreateInBoundsGEP(type, ptr, idxList, name));
+            return Value::New(env, builder->CreateGEP(type, ptr, idxList, name, flags));
         }
     }
     throw Napi::TypeError::New(env, ErrMsg::Class::IRBuilder::CreateInBoundsGEP);

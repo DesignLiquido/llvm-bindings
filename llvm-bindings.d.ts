@@ -1539,8 +1539,8 @@ declare namespace llvm {
         public CreateGEP(type: Type, ptr: Value, idxList: Value[], name?: string): Value;
         public CreateGEP(type: Type, ptr: Value, idx: Value, name?: string): Value;
 
-        public CreateInBoundsGEP(type: Type, ptr: Value, idxList: Value[], name?: string): Value;
-        public CreateInBoundsGEP(type: Type, ptr: Value, idx: Value, name?: string): Value;
+        public CreateInBoundsGEP(type: Type, ptr: Value, idxList: Value[], name?: string, nuw?: boolean): Value;
+        public CreateInBoundsGEP(type: Type, ptr: Value, idx: Value, name?: string, nuw?: boolean): Value;
 
         public CreateGlobalStringPtr(str: string, name?: string, addrSpace?: number, module?: Module): Constant;
 
