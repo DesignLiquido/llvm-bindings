@@ -1371,6 +1371,16 @@ declare namespace llvm {
         protected constructor();
     }
 
+    const AtomicOrdering: {
+        NotAtomic: number;
+        Unordered: number;
+        Monotonic: number;
+        Acquire: number;
+        Release: number;
+        AcquireRelease: number;
+        SequentiallyConsistent: number;
+    };
+
     class IRBuilder {
         public constructor(context: LLVMContext);
         public constructor(theBB: BasicBlock);

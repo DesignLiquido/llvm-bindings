@@ -1,6 +1,16 @@
 #include "IR/index.h"
+#include <llvm/Support/AtomicOrdering.h>
 
 void InitIR(Napi::Env env, Napi::Object &exports) {
+    Napi::Object atomicOrdering = Napi::Object::New(env);
+    atomicOrdering.Set("NotAtomic",              Napi::Number::New(env, static_cast<int>(llvm::AtomicOrdering::NotAtomic)));
+    atomicOrdering.Set("Unordered",              Napi::Number::New(env, static_cast<int>(llvm::AtomicOrdering::Unordered)));
+    atomicOrdering.Set("Monotonic",              Napi::Number::New(env, static_cast<int>(llvm::AtomicOrdering::Monotonic)));
+    atomicOrdering.Set("Acquire",                Napi::Number::New(env, static_cast<int>(llvm::AtomicOrdering::Acquire)));
+    atomicOrdering.Set("Release",                Napi::Number::New(env, static_cast<int>(llvm::AtomicOrdering::Release)));
+    atomicOrdering.Set("AcquireRelease",         Napi::Number::New(env, static_cast<int>(llvm::AtomicOrdering::AcquireRelease)));
+    atomicOrdering.Set("SequentiallyConsistent", Napi::Number::New(env, static_cast<int>(llvm::AtomicOrdering::SequentiallyConsistent)));
+    exports.Set("AtomicOrdering", atomicOrdering);
     LLVMContext::Init(env, exports);
     Module::Init(env, exports);
     Type::Init(env, exports);
