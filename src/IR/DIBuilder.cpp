@@ -1,5 +1,6 @@
 #include "IR/index.h"
 #include "Util/index.h"
+#include <llvm/Config/llvm-config.h>
 
 void DIBuilder::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
@@ -55,7 +56,9 @@ DIBuilder::DIBuilder(const Napi::CallbackInfo &info) : ObjectWrap(info) {
             // DbgRecord* instead of an Instruction*.  Force the classic
             // intrinsic-based format so that our bindings keep returning
             // Instruction* as documented.
+#if LLVM_VERSION_MAJOR < 21
             module->setIsNewDbgInfoFormat(false);
+#endif
             builder = new llvm::DIBuilder(*module);
             return;
         }
@@ -281,9 +284,15 @@ Napi::Value DIBuilder::insertDeclare(const Napi::CallbackInfo &info) {
         llvm::DILocation *location = DILocation::Extract(info[3]);
         if (BasicBlock::IsClassOf(info[4])) {
             llvm::BasicBlock *insertBB = BasicBlock::Extract(info[4]);
+#if LLVM_VERSION_MAJOR >= 21
+            insertBB->convertFromNewDbgValues();
+#endif
             instruction = builder->insertDeclare(storage, variable, expr, location, insertBB).dyn_cast<llvm::Instruction *>();
         } else if (Instruction::IsClassOf(info[4])) {
             llvm::Instruction *insertBefore = Instruction::Extract(info[4]);
+#if LLVM_VERSION_MAJOR >= 21
+            insertBefore->getParent()->convertFromNewDbgValues();
+#endif
             instruction = builder->insertDeclare(storage, variable, expr, location, insertBefore).dyn_cast<llvm::Instruction *>();
         }
     }
@@ -307,9 +316,15 @@ Napi::Value DIBuilder::insertDbgValueIntrinsic(const Napi::CallbackInfo &info) {
         llvm::DILocation *location = DILocation::Extract(info[3]);
         if (BasicBlock::IsClassOf(info[4])) {
             llvm::BasicBlock *insertBB = BasicBlock::Extract(info[4]);
+#if LLVM_VERSION_MAJOR >= 21
+            insertBB->convertFromNewDbgValues();
+#endif
             instruction = builder->insertDbgValueIntrinsic(value, variable, expr, location, insertBB).dyn_cast<llvm::Instruction *>();
         } else if (Instruction::IsClassOf(info[4])) {
             llvm::Instruction *insertBefore = Instruction::Extract(info[4]);
+#if LLVM_VERSION_MAJOR >= 21
+            insertBefore->getParent()->convertFromNewDbgValues();
+#endif
             instruction = builder->insertDbgValueIntrinsic(value, variable, expr, location, insertBefore).dyn_cast<llvm::Instruction *>();
         }
     }
