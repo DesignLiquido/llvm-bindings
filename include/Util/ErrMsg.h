@@ -221,6 +221,7 @@ namespace ErrMsg {
         namespace ICmpInst {
             constexpr const char *constructor = "ICmpInst.constructor needs to be called with new (external: Napi::External<llvm::ICmpInst>)";
             constexpr const char *setDebugLoc = "ICmpInst.setDebugLoc needs to be called with: (location: DebugLoc)";
+            constexpr const char *setSameSign = "ICmpInst.setSameSign needs to be called with: (value: boolean)";
         }
         namespace FCmpInst {
             constexpr const char *constructor = "FCmpInst.constructor needs to be called with new (external: Napi::External<llvm::FCmpInst>)";
@@ -453,6 +454,7 @@ namespace ErrMsg {
             constexpr const char *CreateInsertValue = "IRBuilder.CreateInsertValue needs to be called with (agg: Value, value: Value, idxs: number[], name?: string)";
             constexpr const char *CreateLandingPad = "IRBuilder.CreateLandingPad needs to be called with (type: Type, numClauses: number, name?: string)";
             constexpr const char *CreatePtrDiff = "IRBuilder.CreatePtrDiff needs to be called with (elemType: Type, lhs: Value, rhs: Value, name?: string)";
+            constexpr const char *CreateAtomicRMW = "IRBuilder.CreateAtomicRMW needs to be called with (op: number, ptr: Value, val: Value, align: number, ordering: number)";
         }
         namespace Metadata {
             constexpr const char *constructor = "Metadata.constructor needs to be called with new (external: Napi::External<llvm::Metadata>)";

@@ -327,9 +327,29 @@ void AtomicCmpXchgInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void AtomicRMWInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
+    Napi::Object binOp = Napi::Object::New(env);
+    binOp.Set("Xchg",     Napi::Number::New(env, llvm::AtomicRMWInst::Xchg));
+    binOp.Set("Add",      Napi::Number::New(env, llvm::AtomicRMWInst::Add));
+    binOp.Set("Sub",      Napi::Number::New(env, llvm::AtomicRMWInst::Sub));
+    binOp.Set("And",      Napi::Number::New(env, llvm::AtomicRMWInst::And));
+    binOp.Set("Nand",     Napi::Number::New(env, llvm::AtomicRMWInst::Nand));
+    binOp.Set("Or",       Napi::Number::New(env, llvm::AtomicRMWInst::Or));
+    binOp.Set("Xor",      Napi::Number::New(env, llvm::AtomicRMWInst::Xor));
+    binOp.Set("Max",      Napi::Number::New(env, llvm::AtomicRMWInst::Max));
+    binOp.Set("Min",      Napi::Number::New(env, llvm::AtomicRMWInst::Min));
+    binOp.Set("UMax",     Napi::Number::New(env, llvm::AtomicRMWInst::UMax));
+    binOp.Set("UMin",     Napi::Number::New(env, llvm::AtomicRMWInst::UMin));
+    binOp.Set("FAdd",     Napi::Number::New(env, llvm::AtomicRMWInst::FAdd));
+    binOp.Set("FSub",     Napi::Number::New(env, llvm::AtomicRMWInst::FSub));
+    binOp.Set("FMax",     Napi::Number::New(env, llvm::AtomicRMWInst::FMax));
+    binOp.Set("FMin",     Napi::Number::New(env, llvm::AtomicRMWInst::FMin));
+    binOp.Set("FMaximum", Napi::Number::New(env, llvm::AtomicRMWInst::FMaximum));
+    binOp.Set("FMinimum", Napi::Number::New(env, llvm::AtomicRMWInst::FMinimum));
     Napi::Function func = DefineClass(env, "AtomicRMWInst", {
+            StaticValue("BinOp", binOp),
             InstanceMethod("getType", &AtomicRMWInst::getType),
-            InstanceMethod("setDebugLoc", &AtomicRMWInst::setDebugLoc)
+            InstanceMethod("setDebugLoc", &AtomicRMWInst::setDebugLoc),
+            InstanceMethod("getOperation", &AtomicRMWInst::getOperation)
     });
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
@@ -378,6 +398,10 @@ void AtomicRMWInst::setDebugLoc(const Napi::CallbackInfo &info) {
         return;
     }
     throw Napi::TypeError::New(info.Env(), ErrMsg::Class::AtomicRMWInst::setDebugLoc);
+}
+
+Napi::Value AtomicRMWInst::getOperation(const Napi::CallbackInfo &info) {
+    return Napi::Number::New(info.Env(), static_cast<int>(atomicRMWInst->getOperation()));
 }
 
 //===----------------------------------------------------------------------===//
@@ -447,7 +471,9 @@ void ICmpInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
     Napi::Function func = DefineClass(env, "ICmpInst", {
             InstanceMethod("getType", &ICmpInst::getType),
-            InstanceMethod("setDebugLoc", &ICmpInst::setDebugLoc)
+            InstanceMethod("setDebugLoc", &ICmpInst::setDebugLoc),
+            InstanceMethod("getSameSign", &ICmpInst::getSameSign),
+            InstanceMethod("setSameSign", &ICmpInst::setSameSign)
     });
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
@@ -496,6 +522,18 @@ void ICmpInst::setDebugLoc(const Napi::CallbackInfo &info) {
         return;
     }
     throw Napi::TypeError::New(info.Env(), ErrMsg::Class::ICmpInst::setDebugLoc);
+}
+
+Napi::Value ICmpInst::getSameSign(const Napi::CallbackInfo &info) {
+    return Napi::Boolean::New(info.Env(), icmpInst->hasSameSign());
+}
+
+void ICmpInst::setSameSign(const Napi::CallbackInfo &info) {
+    if (info.Length() == 1 && info[0].IsBoolean()) {
+        icmpInst->setSameSign(info[0].As<Napi::Boolean>().Value());
+        return;
+    }
+    throw Napi::TypeError::New(info.Env(), ErrMsg::Class::ICmpInst::setSameSign);
 }
 
 //===----------------------------------------------------------------------===//

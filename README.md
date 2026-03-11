@@ -28,7 +28,7 @@ listed in the [TypeScript definition file](./llvm-bindings.d.ts).
 
 ```shell
 # install cmake and llvm by homebrew
-brew install cmake llvm@20
+brew install cmake llvm@21
 
 # install llvm-bindings by yarn
 yarn add llvm-bindings
@@ -40,7 +40,7 @@ yarn add llvm-bindings
 #install llvm by installation script
 wget https://apt.llvm.org/llvm.sh
 sudo chmod +x llvm.sh
-sudo ./llvm.sh 20
+sudo ./llvm.sh 21
 
 # install cmake and zlib by apt-get
 sudo apt-get install cmake zlib1g-dev
@@ -51,16 +51,17 @@ yarn add llvm-bindings
 
 ### Install on Windows
 
-First, please refer to [Build LLVM from sources on Windows 10](https://github.com/ApsarasX/llvm-bindings/wiki/Build-LLVM-from-source-code-on-Windows-10) to build LLVM. An alternative is to download the [prebuilt LLVM 20 binary for Windows](https://github.com/DesignLiquido/llvm-windows/releases/tag/llvmorg-20.1.8).
+First, please refer to [Build LLVM from sources on Windows 10](https://github.com/ApsarasX/llvm-bindings/wiki/Build-LLVM-from-source-code-on-Windows-10) to build LLVM. An alternative is to download a prebuilt LLVM 21 binary for Windows.
 
-Then, find the `llvm-config` command in your LLVM build directory and execute `llvm-config --cmakedir` to get LLVM cmake directory, assuming `C:\Users\dev\LLVM-20.1.8-win64\lib\cmake\llvm`.
+Then, find the `llvm-config` command in your LLVM build directory and execute `llvm-config --cmakedir` to get LLVM cmake directory, assuming `C:\Users\dev\LLVM-21.x.x-win64\lib\cmake\llvm`.
 
 Finally, execute the following commands.
 
 ```shell
 # specify the LLVM cmake directory for cmake-js
 # note: cmake-js reads npm-style config keys
-npm config set cmake_LLVM_DIR C:\Users\dev\LLVM-20.1.8-win64\lib\cmake\llvm
+# on Windows PowerShell, prefer env var over npm config set
+$env:npm_config_cmake_LLVM_DIR = "C:\Users\dev\LLVM-21.x.x-win64\lib\cmake\llvm"
 
 # install llvm-bindings by yarn
 yarn add llvm-bindings
@@ -73,7 +74,11 @@ You can use the configuration options read by `cmake-js` to set the path to the 
 
 ```shell
 # specify the llvm cmake directory by npm-compatible config and cmake-js
-npm config set cmake_LLVM_DIR $(path-to-llvm/bin/llvm-config --cmakedir)
+# macOS/Linux
+export npm_config_cmake_LLVM_DIR="$(path-to-llvm/bin/llvm-config --cmakedir)"
+
+# Windows PowerShell
+$env:npm_config_cmake_LLVM_DIR = "$(path-to-llvm/bin/llvm-config --cmakedir)"
 
 # install llvm-bindings by yarn
 yarn add llvm-bindings
@@ -124,6 +129,12 @@ Due to the limitation of `node-addon-api`, this project has not implemented inhe
 
 LLVM 15 makes opaque pointers the default. Starting from v1.0.0 this library exposes the necessary APIs to opt into opaque-pointer IR while keeping all existing typed-pointer APIs intact.
 
+**At a glance**
+
+- Adds first-class opaque-pointer APIs.
+- Keeps typed-pointer behavior via compatibility mode.
+- Existing typed-pointer code can continue to run.
+
 **New APIs**
 
 | API | Description |
@@ -144,13 +155,29 @@ To opt into opaque pointers, pass an `LLVMContext` to `PointerType.get` / `getUn
 
 LLVM 16 keeps opaque pointers as the default and retains full typed-pointer support behind the `setOpaquePointers(false)` flag. No API changes were introduced in this library between v1.0.x and v2.0.x beyond the underlying LLVM version bump.
 
+**At a glance**
+
+- No JavaScript/TypeScript API surface changes.
+- Primarily an LLVM toolchain version bump.
+
 ## LLVM 17 / v4.0.x
 
 LLVM 17 removes the `setOpaquePointers` flag and makes opaque pointers mandatory, while still retaining deprecated typed-pointer factory functions. No breaking API changes were made to this library for v4.0.x; the same opaque-pointer APIs introduced in v1.0.0 continued to work.
 
+**At a glance**
+
+- Opaque pointers become mandatory in LLVM.
+- Binding API remains stable for consumers.
+
 ## LLVM 18 / v5.0.x — Typed Pointers Removed
 
 LLVM 18 **completely removes** typed pointers. All pointer types are now opaque (`ptr`). The following APIs were removed from LLVM and are no longer available:
+
+**At a glance**
+
+- Typed pointers are fully removed upstream.
+- Migrations are required for typed-pointer constructors and helpers.
+- Library provides compatibility shims for common patterns.
 
 **Removed APIs**
 
@@ -179,12 +206,42 @@ LLVM 18 **completely removes** typed pointers. All pointer types are now opaque 
 
 LLVM 19 introduces two internal changes that required C++ binding updates, but the JavaScript/TypeScript API surface is unchanged:
 
+**At a glance**
+
+- No breaking JS/TS API changes.
+- Internal binding updates for debug-info representation and `CreateNeg` signature changes.
+
 - **RemoveDIs (new debug-info format)**: LLVM 19 defaults to a non-intrinsic debug-info representation where `DIBuilder.insertDeclare` and `DIBuilder.insertDbgValueIntrinsic` return a `DbgRecord*` instead of an `Instruction*`. This library forces the classic intrinsic-based format on the module when a `DIBuilder` is constructed, so both methods continue to return an `Instruction` as documented.
 - **`CreateNeg` signature change**: `IRBuilder.CreateNeg` dropped its `HasNUW` parameter (negation cannot overflow in the unsigned direction); it now accepts only `(value, name?, hasNSW?)`. The binding is updated accordingly; the JavaScript API is unchanged.
 
 ## LLVM 20 / v7.0.x
 
 LLVM 20 is a version bump with no breaking API changes to the JavaScript/TypeScript surface exposed by this library.
+
+**At a glance**
+
+- No API surface changes.
+- LLVM version bump only.
+
+## LLVM 21 / v8.0.x
+
+LLVM 21 introduces binding-level API updates in this project:
+
+**At a glance**
+
+- Removes stale `Attribute.AttrKind.NoCapture` from TypeScript declarations.
+- Adds `ICmpInst.getSameSign()` / `setSameSign(...)`.
+- Exposes `AtomicRMWInst.BinOp` and adds `IRBuilder.CreateAtomicRMW(...)`.
+
+- **`Attribute.AttrKind.NoCapture` removed from TypeScript declarations**: LLVM 21 removed `NoCapture` in favor of the new structured `captures(...)` attribute model. `llvm-bindings.d.ts` now matches runtime behavior and no longer declares `NoCapture`.
+- **`ICmpInst` `samesign` support added**: new methods `ICmpInst.getSameSign()` and `ICmpInst.setSameSign(value)` are available.
+- **`AtomicRMWInst::BinOp` exposed**: JavaScript/TypeScript can now access all `AtomicRMW` operations through `AtomicRMWInst.BinOp`, including LLVM 21 additions `FMaximum` and `FMinimum`.
+- **`IRBuilder.CreateAtomicRMW(...)` added**: atomic RMW instructions can now be constructed directly from JavaScript/TypeScript.
+
+**Migration notes**
+
+- Replace usages of `Attribute.AttrKind.NoCapture` with LLVM 21-compatible attribute construction.
+- For atomic RMW creation, use `IRBuilder.CreateAtomicRMW(op, ptr, val, align, ordering)` with `op` from `AtomicRMWInst.BinOp`.
 
 ## Compatibility
 
@@ -201,6 +258,7 @@ LLVM 20 is a version bump with no breaking API changes to the JavaScript/TypeScr
 | (@designliquido/llvm-bindings) 5.0.x       | 18.1.x                   |
 | (@designliquido/llvm-bindings) 6.0.x       | 19.1.x                   |
 | (@designliquido/llvm-bindings) 7.0.x       | 20.1.x                   |
+| (@designliquido/llvm-bindings) 8.0.x       | 21.1.x                   |
 
 ## Acknowledgments
 

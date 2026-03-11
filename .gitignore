@@ -4,12 +4,10 @@
 cmake-build-*/
 
 build/
-
+coverage/
 dist/
-
-node_modules/
-
 docs/craft/
+node_modules/
 
 package-lock.json
 

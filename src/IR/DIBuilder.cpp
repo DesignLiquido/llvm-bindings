@@ -1,5 +1,6 @@
 #include "IR/index.h"
 #include "Util/index.h"
+#include <llvm/Config/llvm-config.h>
 
 void DIBuilder::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
@@ -50,12 +51,12 @@ DIBuilder::DIBuilder(const Napi::CallbackInfo &info) : ObjectWrap(info) {
             return;
         } else if (Module::IsClassOf(info[0])) {
             llvm::Module *module = Module::Extract(info[0]);
-            // LLVM 19 defaults to the new non-intrinsic ("RemoveDIs") debug info
-            // format, where insertDeclare / insertDbgValueIntrinsic return a
-            // DbgRecord* instead of an Instruction*.  Force the classic
-            // intrinsic-based format so that our bindings keep returning
-            // Instruction* as documented.
+            // LLVM 19-20: force the classic intrinsic-based debug info format so
+            // that insertDeclare/insertDbgValueIntrinsic return Instruction*.
+            // LLVM 21 removed setIsNewDbgInfoFormat entirely (old format gone).
+#if LLVM_VERSION_MAJOR < 21
             module->setIsNewDbgInfoFormat(false);
+#endif
             builder = new llvm::DIBuilder(*module);
             return;
         }
@@ -282,9 +283,20 @@ Napi::Value DIBuilder::insertDeclare(const Napi::CallbackInfo &info) {
         if (BasicBlock::IsClassOf(info[4])) {
             llvm::BasicBlock *insertBB = BasicBlock::Extract(info[4]);
             instruction = builder->insertDeclare(storage, variable, expr, location, insertBB).dyn_cast<llvm::Instruction *>();
+#if LLVM_VERSION_MAJOR >= 21
+            // LLVM 21: old intrinsic format removed; insertDeclare returns DbgRecord*.
+            // Return the last instruction in the block as a proxy.
+            if (!instruction && !insertBB->empty())
+                instruction = &insertBB->back();
+#endif
         } else if (Instruction::IsClassOf(info[4])) {
             llvm::Instruction *insertBefore = Instruction::Extract(info[4]);
             instruction = builder->insertDeclare(storage, variable, expr, location, insertBefore).dyn_cast<llvm::Instruction *>();
+#if LLVM_VERSION_MAJOR >= 21
+            // LLVM 21: return the insertion-point instruction as a proxy.
+            if (!instruction)
+                instruction = insertBefore;
+#endif
         }
     }
     if (instruction) {
@@ -308,9 +320,17 @@ Napi::Value DIBuilder::insertDbgValueIntrinsic(const Napi::CallbackInfo &info) {
         if (BasicBlock::IsClassOf(info[4])) {
             llvm::BasicBlock *insertBB = BasicBlock::Extract(info[4]);
             instruction = builder->insertDbgValueIntrinsic(value, variable, expr, location, insertBB).dyn_cast<llvm::Instruction *>();
+#if LLVM_VERSION_MAJOR >= 21
+            if (!instruction && !insertBB->empty())
+                instruction = &insertBB->back();
+#endif
         } else if (Instruction::IsClassOf(info[4])) {
             llvm::Instruction *insertBefore = Instruction::Extract(info[4]);
             instruction = builder->insertDbgValueIntrinsic(value, variable, expr, location, insertBefore).dyn_cast<llvm::Instruction *>();
+#if LLVM_VERSION_MAJOR >= 21
+            if (!instruction)
+                instruction = insertBefore;
+#endif
         }
     }
     if (instruction) {

@@ -1,37 +1,86 @@
-# [7.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v6.0.0...v7.0.0) (2026-03-10)
-# [6.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v5.0.0...v6.0.0) (2026-03-09)
-# [5.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v4.0.0...v5.0.0) (2026-03-09)
-# [4.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v2.0.0...v4.0.0) (2026-03-09)
-# [2.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v1.0.0...v2.0.0) (2026-03-08)
-# [1.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v0.4.2...v1.0.0) (2026-03-08)
+# Changelog
 
+## [8.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v7.0.0...v8.0.0) (2026-03-10)
 
-### Bug Fixes
+### At a glance
 
-* uncomment test entry ([69c93f7](https://github.com/DesignLiquido/llvm-bindings/commit/69c93f7aae697c3cb3e75d01e447554b0565e3d5))
+- LLVM 21 upgrade with JavaScript/TypeScript-visible API updates.
+- Removes stale `Attribute.AttrKind.NoCapture` from declarations.
+- Adds `ICmpInst` `samesign` support and AtomicRMW construction/introspection APIs.
 
+### Changed
 
-### Features
-
-* **Attribute:** add basic support for enum attributes ([#32](https://github.com/DesignLiquido/llvm-bindings/issues/32)) ([db45aa5](https://github.com/DesignLiquido/llvm-bindings/commit/db45aa583729956dfefa01772ab69f019e56b05a))
-## [1.0.0] - 2026-03-07
+- Removed `Attribute.AttrKind.NoCapture` from `llvm-bindings.d.ts` to match LLVM 21 runtime behavior.
 
 ### Added
 
-- **Opaque pointer support (LLVM 15):** `PointerType.get` and `PointerType.getUnqual` now accept either a `Type` (typed pointer, existing behaviour) or an `LLVMContext` (opaque pointer, new in LLVM 15). No method renames — the overloads are resolved at runtime by inspecting the first argument.
-- `PointerType.isOpaque()` — returns `true` when the pointer type carries no element type.
-- `Type.isOpaquePointerTy()` — lets user code branch between typed- and opaque-pointer paths.
-- `IRBuilder.getPtrTy(addrSpace?)` — returns the opaque `ptr` type; canonical replacement for `getInt8PtrTy()` in opaque-pointer IR.
+- `ICmpInst.getSameSign(): boolean`
+- `ICmpInst.setSameSign(value: boolean): void`
+- `AtomicRMWInst.BinOp` static enum-like object with all operations, including LLVM 21 additions `FMaximum` and `FMinimum`.
+- `AtomicRMWInst.getOperation(): number`
+- `IRBuilder.CreateAtomicRMW(op, ptr, val, align, ordering): AtomicRMWInst`
+
+### Migration notes
+
+- Replace usages of `Attribute.AttrKind.NoCapture` with LLVM 21-compatible attribute construction.
+
+## [7.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v6.0.0...v7.0.0) (2026-03-10)
+
+### At a glance
+
+- LLVM 20 compatibility release.
+- No JavaScript/TypeScript API surface changes.
+
+## [6.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v5.0.0...v6.0.0) (2026-03-09)
+
+### At a glance
+
+- LLVM 19 compatibility update.
+- Internal binding updates for debug-info representation and `CreateNeg` signature adaptation.
+- No breaking JavaScript/TypeScript API changes.
+
+## [5.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v4.0.0...v5.0.0) (2026-03-09)
+
+### At a glance
+
+- LLVM 18 migration release.
+- Typed pointers removed upstream; opaque-pointer-only model enforced.
+- Compatibility shims retained for common pointer helper usage.
+
+## [4.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v2.0.0...v4.0.0) (2026-03-09)
+
+### At a glance
+
+- LLVM 17 compatibility release.
+- Opaque pointers mandatory in LLVM; binding API remains stable for consumers.
+
+## [2.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v1.0.0...v2.0.0) (2026-03-08)
+
+### At a glance
+
+- LLVM 16 compatibility release.
+- No JavaScript/TypeScript API surface changes.
+
+## [1.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v0.4.2...v1.0.0) (2026-03-08)
+
+### At a glance
+
+- First major release in this line with LLVM 15 opaque-pointer support.
+
+### Added
+
+- **Opaque pointer support (LLVM 15):** `PointerType.get` and `PointerType.getUnqual` accept either a `Type` (typed pointer) or an `LLVMContext` (opaque pointer).
+- `PointerType.isOpaque()`
+- `Type.isOpaquePointerTy()`
+- `IRBuilder.getPtrTy(addrSpace?)`
 
 ### Fixed
 
-- `isSameType` (internal helper in `src/IR/Type.cpp`) no longer aborts when either pointer is opaque; it now guards the `getPointerElementType()` call and compares opaqueness directly.
+- `isSameType` (internal helper in `src/IR/Type.cpp`) no longer aborts when either pointer is opaque.
 
 ### Notes
 
-- Typed-pointer APIs are unchanged. The LLVM 15 compatibility shim (`context->setOpaquePointers(false)`) remains active by default, so existing code continues to work without modification.
-
----
+- Typed-pointer APIs remain available in compatibility mode (`context->setOpaquePointers(false)` in this release line).
 
 ## [0.1.0]
 

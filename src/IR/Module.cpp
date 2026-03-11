@@ -106,7 +106,7 @@ Napi::Value Module::getDataLayout(const Napi::CallbackInfo &info) {
 
 Napi::Value Module::getTargetTriple(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    return Napi::String::New(env, module->getTargetTriple());
+    return Napi::String::New(env, module->getTargetTriple().str());
 }
 
 void Module::setModuleIdentifier(const Napi::CallbackInfo &info) {
@@ -149,7 +149,7 @@ void Module::setTargetTriple(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
     if (info.Length() == 1 && info[0].IsString()) {
         const std::string &triple = info[0].As<Napi::String>();
-        module->setTargetTriple(triple);
+        module->setTargetTriple(llvm::Triple(triple));
         return;
     }
     throw Napi::TypeError::New(env, ErrMsg::Class::Module::setTargetTriple);
