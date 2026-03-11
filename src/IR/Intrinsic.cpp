@@ -16,9 +16,9 @@ Napi::Value getDeclaration(const Napi::CallbackInfo &info) {
             for (unsigned i = 0; i < numTypes; ++i) {
                 paramTypes[i] = Type::Extract(types.Get(i));
             }
-            function = llvm::Intrinsic::getDeclaration(module, id, paramTypes);
+            function = llvm::Intrinsic::getOrInsertDeclaration(module, id, paramTypes);
         } else {
-            function = llvm::Intrinsic::getDeclaration(module, id);
+            function = llvm::Intrinsic::getOrInsertDeclaration(module, id);
         }
         return Function::New(env, function);
     }

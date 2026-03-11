@@ -46,7 +46,7 @@ Napi::Value Target::createTargetMachine(const Napi::CallbackInfo &info) {
     }
     llvm::TargetOptions options{};
     llvm::TargetMachine *targetMachinePtr = target->createTargetMachine(
-        targetTriple, cpu, features, options, std::optional<llvm::Reloc::Model>{});
+        llvm::Triple(targetTriple), cpu, features, options, std::optional<llvm::Reloc::Model>{});
     return TargetMachine::New(env, targetMachinePtr);
 }
 

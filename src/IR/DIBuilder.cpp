@@ -93,7 +93,11 @@ Napi::Value DIBuilder::createCompileUnit(const Napi::CallbackInfo &info) {
         bool isOptimized = info[3].As<Napi::Boolean>();
         const std::string &flags = info[4].As<Napi::String>();
         unsigned rv = info[5].As<Napi::Number>();
+#if LLVM_VERSION_MAJOR >= 22
+        llvm::DICompileUnit *unit = builder->createCompileUnit(llvm::DISourceLanguageName(lang), file, producer, isOptimized, flags, rv);
+#else
         llvm::DICompileUnit *unit = builder->createCompileUnit(lang, file, producer, isOptimized, flags, rv);
+#endif
         return DICompileUnit::New(env, unit);
     }
     throw Napi::TypeError::New(env, ErrMsg::Class::DIBuilder::createCompileUnit);

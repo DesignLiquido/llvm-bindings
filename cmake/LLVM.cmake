@@ -26,8 +26,8 @@ endif ()
 # We enforce the minimum version manually after the package is found.
 find_package(LLVM REQUIRED CONFIG)
 
-if (LLVM_PACKAGE_VERSION VERSION_LESS "20")
-    message(FATAL_ERROR "LLVM 20 or later is required. Found: ${LLVM_PACKAGE_VERSION}")
+if (LLVM_PACKAGE_VERSION VERSION_LESS "22")
+    message(FATAL_ERROR "LLVM 22 or later is required. Found: ${LLVM_PACKAGE_VERSION}")
 endif ()
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
