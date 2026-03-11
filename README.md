@@ -28,7 +28,7 @@ listed in the [TypeScript definition file](./llvm-bindings.d.ts).
 
 ```shell
 # install cmake and llvm by homebrew
-brew install cmake llvm@21
+brew install cmake llvm@22
 
 # install llvm-bindings by yarn
 yarn add llvm-bindings
@@ -40,7 +40,7 @@ yarn add llvm-bindings
 #install llvm by installation script
 wget https://apt.llvm.org/llvm.sh
 sudo chmod +x llvm.sh
-sudo ./llvm.sh 21
+sudo ./llvm.sh 22
 
 # install cmake and zlib by apt-get
 sudo apt-get install cmake zlib1g-dev
@@ -51,9 +51,9 @@ yarn add llvm-bindings
 
 ### Install on Windows
 
-First, please refer to [Build LLVM from sources on Windows 10](https://github.com/ApsarasX/llvm-bindings/wiki/Build-LLVM-from-source-code-on-Windows-10) to build LLVM. An alternative is to download a prebuilt LLVM 21 binary for Windows.
+First, please refer to [Build LLVM from sources on Windows 10](https://github.com/ApsarasX/llvm-bindings/wiki/Build-LLVM-from-source-code-on-Windows-10) to build LLVM. An alternative is to download a prebuilt LLVM 22 binary for Windows.
 
-Then, find the `llvm-config` command in your LLVM build directory and execute `llvm-config --cmakedir` to get LLVM cmake directory, assuming `C:\Users\dev\LLVM-21.x.x-win64\lib\cmake\llvm`.
+Then, find the `llvm-config` command in your LLVM build directory and execute `llvm-config --cmakedir` to get LLVM cmake directory, assuming `C:\Users\dev\LLVM-22.x.x-win64\lib\cmake\llvm`.
 
 Finally, execute the following commands.
 
@@ -61,7 +61,7 @@ Finally, execute the following commands.
 # specify the LLVM cmake directory for cmake-js
 # note: cmake-js reads npm-style config keys
 # on Windows PowerShell, prefer env var over npm config set
-$env:npm_config_cmake_LLVM_DIR = "C:\Users\dev\LLVM-21.x.x-win64\lib\cmake\llvm"
+$env:npm_config_cmake_LLVM_DIR = "C:\Users\dev\LLVM-22.x.x-win64\lib\cmake\llvm"
 
 # install llvm-bindings by yarn
 yarn add llvm-bindings
@@ -243,6 +243,21 @@ LLVM 21 introduces binding-level API updates in this project:
 - Replace usages of `Attribute.AttrKind.NoCapture` with LLVM 21-compatible attribute construction.
 - For atomic RMW creation, use `IRBuilder.CreateAtomicRMW(op, ptr, val, align, ordering)` with `op` from `AtomicRMWInst.BinOp`.
 
+## LLVM 22 / v9.0.x
+
+LLVM 22 introduces a source-language naming API change in debug info and bumps the minimum supported version.
+
+**At a glance**
+
+- No breaking JavaScript/TypeScript API surface changes.
+- `DIBuilder.createCompileUnit` internally now uses `DISourceLanguageName()` to wrap the language code (LLVM 22 replaced the raw `dwarf::SourceLanguage` cast).
+- Minimum required LLVM version is now 22; older LLVM versions are no longer supported.
+
+**Internal changes (no JS/TS impact)**
+
+- `DIBuilder.cpp`: removed the `#if LLVM_VERSION_MAJOR >= 22` conditional; the LLVM 22+ API is now the only code path.
+- `cmake/LLVM.cmake`: the version discovery loop and the minimum-version guard now enforce LLVM >= 22.
+
 ## Compatibility
 
 | llvm-bindings versions                     | compatible LLVM versions |
@@ -259,6 +274,7 @@ LLVM 21 introduces binding-level API updates in this project:
 | (@designliquido/llvm-bindings) 6.0.x       | 19.1.x                   |
 | (@designliquido/llvm-bindings) 7.0.x       | 20.1.x                   |
 | (@designliquido/llvm-bindings) 8.0.x       | 21.1.x                   |
+| (@designliquido/llvm-bindings) 9.0.x       | 22.1.x                   |
 
 ## Acknowledgments
 

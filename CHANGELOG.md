@@ -1,8 +1,21 @@
-# [9.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v8.0.0...v9.0.0) (2026-03-11)
-# [8.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v7.0.0...v8.0.0) (2026-03-11)
 # Changelog
 
-## [8.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v7.0.0...v8.0.0) (2026-03-10)
+## [9.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v8.0.0...v9.0.0) (2026-03-11)
+
+### At a glance
+
+- LLVM 22 compatibility release.
+- No breaking JavaScript/TypeScript API surface changes.
+- Internal binding update for debug-info language representation.
+- Minimum supported LLVM version raised to 22.
+
+### Changed
+
+- `DIBuilder.createCompileUnit` now calls `llvm::DISourceLanguageName(lang)` instead of a raw `dwarf::SourceLanguage` cast, matching the LLVM 22 API. The JavaScript/TypeScript signature is unchanged (still accepts a number).
+- Removed the `#if LLVM_VERSION_MAJOR >= 22` / `#else` conditional in `DIBuilder.cpp`; only the LLVM 22+ code path is retained.
+- `cmake/LLVM.cmake` version-discovery loop and minimum-version guard updated to require LLVM >= 22.
+
+## [8.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v7.0.0...v8.0.0) (2026-03-11)
 
 ### At a glance
 
