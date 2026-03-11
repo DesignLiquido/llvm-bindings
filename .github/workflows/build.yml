@@ -15,8 +15,8 @@ on:
       - 'LICENSE'
 
 env:
-  LLVM_VERSION: 21.1.8
-  LLVM_VERSION_MAJOR: 21
+  LLVM_VERSION: 22.1.0
+  LLVM_VERSION_MAJOR: 22
 
 jobs:
   build-push:
@@ -42,12 +42,21 @@ jobs:
           brew install llvm@${{ env.LLVM_VERSION_MAJOR }} ninja || brew link --overwrite python@3.12
           echo "LLVM_CMAKE_DIR=$(brew --prefix llvm@${{ env.LLVM_VERSION_MAJOR }})/lib/cmake/llvm" >> $GITHUB_ENV
       - name: Install LLVM and Ninja on Ubuntu (via llvm.sh)
-        if: startsWith(matrix.os, 'ubuntu') && matrix.os != 'ubuntu-24.04'
+        if: startsWith(matrix.os, 'ubuntu') && matrix.os != 'ubuntu-22.04' && matrix.os != 'ubuntu-24.04'
         run: |
           sudo wget https://apt.llvm.org/llvm.sh
           sudo chmod +x llvm.sh
           sudo ./llvm.sh ${{ env.LLVM_VERSION_MAJOR }}
           sudo apt-get install ninja-build
+      - name: Install LLVM and Ninja on Ubuntu 22.04
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg lsb-release software-properties-common ninja-build
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/llvm-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/llvm-archive-keyring.gpg] http://apt.llvm.org/jammy/ llvm-toolchain-jammy-${{ env.LLVM_VERSION_MAJOR }} main" | sudo tee /etc/apt/sources.list.d/llvm.list
+          sudo apt-get update
+          sudo apt-get install -y llvm-${{ env.LLVM_VERSION_MAJOR }}-dev
       - name: Install LLVM and Ninja on Ubuntu 24.04
         if: matrix.os == 'ubuntu-24.04'
         run: |
@@ -127,12 +136,21 @@ jobs:
           brew install llvm@${{ env.LLVM_VERSION_MAJOR }} ninja || brew link --overwrite python@3.12
           echo "LLVM_CMAKE_DIR=$(brew --prefix llvm@${{ env.LLVM_VERSION_MAJOR }})/lib/cmake/llvm" >> $GITHUB_ENV
       - name: Install LLVM and Ninja on Ubuntu (via llvm.sh)
-        if: startsWith(matrix.os, 'ubuntu') && matrix.os != 'ubuntu-24.04'
+        if: startsWith(matrix.os, 'ubuntu') && matrix.os != 'ubuntu-22.04' && matrix.os != 'ubuntu-24.04'
         run: |
           sudo wget https://apt.llvm.org/llvm.sh
           sudo chmod +x llvm.sh
           sudo ./llvm.sh ${{ env.LLVM_VERSION_MAJOR }}
           sudo apt-get install ninja-build
+      - name: Install LLVM and Ninja on Ubuntu 22.04
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg lsb-release software-properties-common ninja-build
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/llvm-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/llvm-archive-keyring.gpg] http://apt.llvm.org/jammy/ llvm-toolchain-jammy-${{ env.LLVM_VERSION_MAJOR }} main" | sudo tee /etc/apt/sources.list.d/llvm.list
+          sudo apt-get update
+          sudo apt-get install -y llvm-${{ env.LLVM_VERSION_MAJOR }}-dev
       - name: Install LLVM and Ninja on Ubuntu 24.04
         if: matrix.os == 'ubuntu-24.04'
         run: |
