@@ -258,6 +258,94 @@ LLVM 22 introduces a source-language naming API change in debug info and bumps t
 - `DIBuilder.cpp`: removed the `#if LLVM_VERSION_MAJOR >= 22` conditional; the LLVM 22+ API is now the only code path.
 - `cmake/LLVM.cmake`: the version discovery loop and the minimum-version guard now enforce LLVM >= 22.
 
+## v9.1.0 — Basic code generation
+
+v9.1.0 adds a substantial set of new APIs for compiling LLVM IR to native code.
+
+**At a glance**
+
+- Adds basic code generation: compile a module to an object file or an in-memory buffer.
+- Adds `ModulePassManager` and `FunctionPassManager` wrappers over LLVM's new PassBuilder infrastructure.
+- Adds `CallingConv` namespace with all calling convention IDs.
+- Adds `Reloc`, `CodeModel`, `CodeGenOpt`, and `CodeGenFileType` enum namespaces.
+- Adds `OptimizationLevel` and `ThinOrFullLTOPhase` enum namespaces.
+- Extends `Function` with `getCallingConv()` and `setCallingConv(cc)`.
+- Extends `StructType.create` with an optional `isPacked` boolean parameter.
+- Extends `APInt` constructor to accept a `bigint` value in addition to `number`.
+- Extends `Target.createTargetMachine` with optional `reloc`, `codeModel`, `optLevel`, and `jit` parameters.
+
+**Code generation**
+
+Initialize target backends first, then use `TargetMachine.emitToFile` or `TargetMachine.emitToBuffer`:
+
+```typescript
+import llvm from 'llvm-bindings';
+
+llvm.InitializeAllTargetInfos();
+llvm.InitializeAllTargets();
+llvm.InitializeAllTargetMCs();
+llvm.InitializeAllAsmPrinters();
+
+const target = llvm.TargetRegistry.lookupTarget('x86_64')!;
+const machine = target.createTargetMachine(
+    'x86_64-unknown-unknown',
+    'generic',
+    '',
+    llvm.Reloc.PIC_,
+    llvm.CodeModel.Small,
+    llvm.CodeGenOpt.Default,
+);
+
+// ... build your module ...
+const myModule: llvm.Module = /* ... */;
+myModule.setDataLayout(machine.createDataLayout());
+
+// Emit to an object file on disk
+machine.emitToFile(myModule, '/tmp/out.o', llvm.CodeGenFileType.Object);
+
+// Or emit to an in-memory Buffer
+const buf: Buffer = machine.emitToBuffer(myModule, llvm.CodeGenFileType.Object);
+```
+
+**Pass manager**
+
+`ModulePassManager` wraps LLVM's new PassBuilder pipeline. Pass the desired `OptimizationLevel` to its constructor:
+
+```typescript
+const mpm = new llvm.ModulePassManager(llvm.OptimizationLevel.O2);
+mpm.run(myModule);
+```
+
+`FunctionPassManager` is obtained via `ModulePassManager.createFunctionPassManager` and can be composed back into the module pipeline:
+
+```typescript
+const fpm = mpm.createFunctionPassManager(llvm.ThinOrFullLTOPhase.None);
+// fpm.addSROAPass();
+// fpm.addEarlyCSEPass();
+// fpm.addInstCombinePass();
+mpm.addFunctionPasses(fpm);
+```
+
+**Calling conventions**
+
+```typescript
+func.setCallingConv(llvm.CallingConv.Fast);
+console.log(func.getCallingConv()); // 8
+```
+
+**Packed structs**
+
+```typescript
+const packed = llvm.StructType.create(context, [i8, i32], 'PackedPoint', true);
+console.log(packed.isPacked()); // true
+```
+
+**BigInt support for APInt**
+
+```typescript
+const big = new llvm.APInt(64, 9007199254740993n); // value > Number.MAX_SAFE_INTEGER
+```
+
 ## Compatibility
 
 | llvm-bindings versions                     | compatible LLVM versions |
@@ -275,6 +363,7 @@ LLVM 22 introduces a source-language naming API change in debug info and bumps t
 | (@designliquido/llvm-bindings) 7.0.x       | 20.1.x                   |
 | (@designliquido/llvm-bindings) 8.0.x       | 21.1.x                   |
 | (@designliquido/llvm-bindings) 9.0.x       | 22.1.x                   |
+| (@designliquido/llvm-bindings) 9.1.x       | 22.1.x                   |
 
 ## Acknowledgments
 

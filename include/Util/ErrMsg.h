@@ -3,7 +3,7 @@
 namespace ErrMsg {
     namespace Class {
         namespace APInt {
-            constexpr const char *constructor = "APInt.constructor needs to be called with new (numBits: number, value: number, isSigned?: boolean)";
+            constexpr const char *constructor = "APInt.constructor needs to be called with new (numBits: number, value: number | bigint, isSigned?: boolean)";
         }
         namespace APFloat {
             constexpr const char *constructor = "APFloat.constructor needs to be called with new (value: number)";
@@ -55,7 +55,8 @@ namespace ErrMsg {
             constexpr const char *constructor = "StructType.constructor needs to be called with new (external: Napi::External<llvm::StructType>)";
             constexpr const char *create = "StructType.create needs to be called with:"
                                            "\n\t - (context: LLVMContext, name: string)"
-                                           "\n\t - (context: LLVMContext, elementTypes: Type[], name: string)";
+                                           "\n\t - (context: LLVMContext, elementTypes: Type[], name: string)"
+                                           "\n\t - (context: LLVMContext, elementTypes: Type[], name: string, isPacked: boolean)";
             constexpr const char *get = "StructType.get needs to be called with:"
                                         "\n\t - (context: LLVMContext)"
                                         "\n\t - (context: LLVMContext, elementTypes: Type[])";
@@ -568,7 +569,9 @@ namespace ErrMsg {
         }
         namespace Target {
             constexpr const char *constructor = "Target.constructor needs to be called with new (external: Napi::External<llvm::Target>)";
-            constexpr const char *createTargetMachine = "Target.createTargetMachine needs to be called with (targetTriple: string, cpu: string, features?: string)";
+            constexpr const char *createTargetMachine = "Target.createTargetMachine needs to be called with"
+                                                        "\n\t - (targetTriple: string, cpu: string, features?: string)"
+                                                        "\n\t - (targetTriple: string, cpu: string, features: string, reloc: number, codeModel: number, optLevel?: number, jit?: boolean)";
         }
         namespace TargetRegistry {
             constexpr const char *lookupTarget = "TargetRegistry.lookupTarget needs to be called with (triple: string)";

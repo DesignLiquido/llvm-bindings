@@ -15,7 +15,7 @@ on:
       - 'LICENSE'
 
 env:
-  LLVM_VERSION: 22.1.0
+  LLVM_VERSION: 22.1.1
   LLVM_VERSION_MAJOR: 22
 
 jobs:

@@ -1,5 +1,33 @@
 # Changelog
 
+## [9.1.0](https://github.com/DesignLiquido/llvm-bindings/compare/v9.0.0...v9.1.0) (2026-03-12)
+
+### At a glance
+
+- Adds basic code generation: compile a module directly to an object file or an in-memory buffer.
+- Adds `ModulePassManager` and `FunctionPassManager` wrappers over LLVM's new PassBuilder infrastructure.
+- Adds `CallingConv`, `Reloc`, `CodeModel`, `CodeGenOpt`, `CodeGenFileType`, `OptimizationLevel`, and `ThinOrFullLTOPhase` enum namespaces.
+- Extends `Function`, `StructType.create`, `APInt`, and `Target.createTargetMachine` with new parameters.
+
+### Added
+
+- `TargetMachine.emitToFile(module, filePath, fileType)` — compiles a module to an object or assembly file on disk.
+- `TargetMachine.emitToBuffer(module, fileType)` — compiles a module to an in-memory `Buffer`.
+- `ModulePassManager` class — wraps LLVM's new `PassBuilder` pipeline. Constructor accepts an optional `OptimizationLevel` value (default: `O0`). Methods: `run(module)`, `addVerifierPass()`, `addFunctionPasses(fpm)`, `createFunctionPassManager(ltoPhase?)`, `isEmpty()`.
+- `FunctionPassManager` class — function-level pass pipeline obtained via `ModulePassManager.createFunctionPassManager`. Methods: `addSROAPass()`, `addEarlyCSEPass(useSSA?)`, `addInstCombinePass()`, `isEmpty()`.
+- `CallingConv` namespace — all `llvm::CallingConv` IDs (C, Fast, Cold, GHC, X86_StdCall, ARM_AAPCS, AMDGPU_KERNEL, …).
+- `Reloc` namespace — `Static`, `PIC_`, `DynamicNoPIC`, `ROPI`, `RWPI`, `ROPI_RWPI`.
+- `CodeModel` namespace — `Tiny`, `Small`, `Kernel`, `Medium`, `Large`.
+- `CodeGenOpt` namespace — `None`, `Less`, `Default`, `Aggressive`.
+- `CodeGenFileType` namespace — `Assembly`, `Object`, `Null`.
+- `OptimizationLevel` namespace — `O0`, `O1`, `O2`, `O3`, `Os`, `Oz`.
+- `ThinOrFullLTOPhase` namespace — `None`, `ThinLTOPreLink`, `ThinLTOPostLink`, `FullLTOPreLink`, `FullLTOPostLink`.
+- `Function.getCallingConv(): number` — returns the function's current calling convention.
+- `Function.setCallingConv(cc: number): void` — sets the function's calling convention.
+- `StructType.create(context, elementTypes, name, isPacked?)` — new optional `isPacked` boolean parameter.
+- `APInt` constructor now also accepts a `bigint` value (in addition to `number`), enabling representation of values larger than `Number.MAX_SAFE_INTEGER`.
+- `Target.createTargetMachine` overloads with optional `reloc`, `codeModel`, `optLevel` (`CodeGenOpt`), and `jit` parameters.
+
 ## [9.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v8.0.0...v9.0.0) (2026-03-11)
 
 ### At a glance

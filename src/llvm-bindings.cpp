@@ -11,6 +11,7 @@
 #include "IRReader/index.h"
 #include "Linker/index.h"
 #include "MC/index.h"
+#include "Passes/index.h"
 #include "Support/index.h"
 #include "Target/index.h"
 
@@ -43,6 +44,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     InitIRReader(env, exports);
     InitLinker(env, exports);
     InitMC(env, exports);
+    InitPasses(env, exports);
     InitSupport(env, exports);
     InitTarget(env, exports);
     return exports;
