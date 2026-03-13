@@ -138,7 +138,7 @@ Napi::Value ModulePassManager::createFunctionPassManager(const Napi::CallbackInf
 
 void ModulePassManager::addFunctionPasses(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    if (info.Length() == 0 || !FunctionPassManager::IsClassOf(info[0])) {
+    if (info.Length() == 0 || info[0].IsNull() || !FunctionPassManager::IsClassOf(info[0])) {
         throw Napi::TypeError::New(env, "Expected FunctionPassManager argument");
     }
     llvm::FunctionPassManager &fpm = FunctionPassManager::Unwrap(info[0].As<Napi::Object>())->getLLVMPrimitive();

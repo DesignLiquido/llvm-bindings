@@ -81,6 +81,8 @@ describe('Test TargetMachine', () => {
 
         const context = new llvm.LLVMContext();
         const module = buildFibonacciModule(context);
+        module.setTargetTriple('x86_64-unknown-unknown');
+        module.setDataLayout(machine.createDataLayout());
 
         const buf = machine.emitToBuffer(module, llvm.CodeGenFileType.Object);
         expect(buf).toBeInstanceOf(Buffer);
@@ -93,6 +95,8 @@ describe('Test TargetMachine', () => {
 
         const context = new llvm.LLVMContext();
         const module = buildFibonacciModule(context);
+        module.setTargetTriple('x86_64-unknown-unknown');
+        module.setDataLayout(machine.createDataLayout());
 
         const outPath = path.join(os.tmpdir(), `llvm-bindings-test-${process.pid}.o`);
         try {
@@ -116,8 +120,9 @@ describe('Test TargetMachine', () => {
         if (!machine || !target) return;
         const context = new llvm.LLVMContext();
         const module = buildFibonacciModule(context);
+        const invalidPath = path.join(os.tmpdir(), 'nonexistent-llvm-subdir-xyz', 'out.o');
         expect(() =>
-            machine!.emitToFile(module, '/nonexistent-dir/out.o', llvm.CodeGenFileType.Object),
+            machine!.emitToFile(module, invalidPath, llvm.CodeGenFileType.Object),
         ).toThrow();
     });
 });

@@ -39,13 +39,13 @@ TargetMachine::TargetMachine(const Napi::CallbackInfo &info) : ObjectWrap(info) 
 
 Napi::Value TargetMachine::createDataLayout(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    const llvm::DataLayout &dataLayout = targetMachine->createDataLayout();
-    return DataLayout::New(env, const_cast<llvm::DataLayout *>(&dataLayout));
+    auto *dataLayout = new llvm::DataLayout(targetMachine->createDataLayout());
+    return DataLayout::New(env, dataLayout);
 }
 
 void TargetMachine::emitToFile(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    if (info.Length() < 3 || !Module::IsClassOf(info[0]) || !info[1].IsString() || !info[2].IsNumber()) {
+    if (info.Length() < 3 || !Module::IsClassOf(info[0]) || info[0].IsNull() || !info[1].IsString() || !info[2].IsNumber()) {
         throw Napi::TypeError::New(env, "emitToFile requires (Module, string, number)");
     }
     llvm::Module *module = Module::Extract(info[0]);
@@ -68,7 +68,7 @@ void TargetMachine::emitToFile(const Napi::CallbackInfo &info) {
 
 Napi::Value TargetMachine::emitToBuffer(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    if (info.Length() < 2 || !Module::IsClassOf(info[0]) || !info[1].IsNumber()) {
+    if (info.Length() < 2 || !Module::IsClassOf(info[0]) || info[0].IsNull() || !info[1].IsNumber()) {
         throw Napi::TypeError::New(env, "emitToBuffer requires (Module, number)");
     }
     llvm::Module *module = Module::Extract(info[0]);

@@ -2,6 +2,7 @@
 #include "Target/index.h"
 #include "Util/index.h"
 #include <llvm/Support/CodeGen.h>
+#include <optional>
 
 //===----------------------------------------------------------------------===//
 //                        Target Class

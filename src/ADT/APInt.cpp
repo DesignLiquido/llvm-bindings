@@ -32,6 +32,9 @@ APInt::APInt(const Napi::CallbackInfo &info) : ObjectWrap(info) {
     } else {
         bool lossless;
         val = info[1].As<Napi::BigInt>().Uint64Value(&lossless);
+        if (!lossless) {
+            throw Napi::TypeError::New(env, "BigInt value does not fit in a 64-bit unsigned integer");
+        }
     }
     bool isSigned = false;
     if (argsLen >= 3) {
