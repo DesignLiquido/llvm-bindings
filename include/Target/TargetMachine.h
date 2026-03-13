@@ -16,7 +16,11 @@ public:
     explicit TargetMachine(const Napi::CallbackInfo &info);
 
 private:
-    const llvm::TargetMachine *targetMachine = nullptr;
+    llvm::TargetMachine *targetMachine = nullptr;
 
     Napi::Value createDataLayout(const Napi::CallbackInfo &info);
+
+    void emitToFile(const Napi::CallbackInfo &info);
+
+    Napi::Value emitToBuffer(const Napi::CallbackInfo &info);
 };

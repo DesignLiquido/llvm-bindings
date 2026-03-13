@@ -1,6 +1,7 @@
 #include "MC/index.h"
 #include "Target/index.h"
 #include "Util/index.h"
+#include <llvm/Support/CodeGen.h>
 
 //===----------------------------------------------------------------------===//
 //                        Target Class
@@ -35,7 +36,19 @@ Target::Target(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Target>{info} 
 Napi::Value Target::createTargetMachine(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
     unsigned argsLen = info.Length();
-    if (argsLen < 2 || !info[0].IsString() || !info[1].IsString() || argsLen >= 3 && !info[2].IsString()) {
+    // Overloads:
+    //   (triple, cpu)
+    //   (triple, cpu, features)
+    //   (triple, cpu, features, reloc)
+    //   (triple, cpu, features, reloc, codeModel)
+    //   (triple, cpu, features, reloc, codeModel, optLevel)
+    //   (triple, cpu, features, reloc, codeModel, optLevel, jit)
+    if (argsLen < 2 || !info[0].IsString() || !info[1].IsString() ||
+        argsLen >= 3 && !info[2].IsString() ||
+        argsLen >= 4 && !info[3].IsNumber() ||
+        argsLen >= 5 && !info[4].IsNumber() ||
+        argsLen >= 6 && !info[5].IsNumber() ||
+        argsLen >= 7 && !info[6].IsBoolean()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Target::createTargetMachine);
     }
     std::string targetTriple = info[0].As<Napi::String>();
@@ -45,8 +58,24 @@ Napi::Value Target::createTargetMachine(const Napi::CallbackInfo &info) {
         features = info[2].As<Napi::String>();
     }
     llvm::TargetOptions options{};
+    std::optional<llvm::Reloc::Model> relocModel;
+    std::optional<llvm::CodeModel::Model> codeModel;
+    llvm::CodeGenOptLevel optLevel = llvm::CodeGenOptLevel::Default;
+    bool jit = false;
+    if (argsLen >= 4) {
+        relocModel = static_cast<llvm::Reloc::Model>(info[3].As<Napi::Number>().Uint32Value());
+    }
+    if (argsLen >= 5) {
+        codeModel = static_cast<llvm::CodeModel::Model>(info[4].As<Napi::Number>().Uint32Value());
+    }
+    if (argsLen >= 6) {
+        optLevel = static_cast<llvm::CodeGenOptLevel>(info[5].As<Napi::Number>().Uint32Value());
+    }
+    if (argsLen >= 7) {
+        jit = info[6].As<Napi::Boolean>().Value();
+    }
     llvm::TargetMachine *targetMachinePtr = target->createTargetMachine(
-        llvm::Triple(targetTriple), cpu, features, options, std::optional<llvm::Reloc::Model>{});
+        llvm::Triple(targetTriple), cpu, features, options, relocModel, codeModel, optLevel, jit);
     return TargetMachine::New(env, targetMachinePtr);
 }
 

@@ -1,6 +1,6 @@
 declare namespace llvm {
     class APInt {
-        public constructor(numBits: number, value: number, isSigned?: boolean);
+        public constructor(numBits: number, value: number | bigint, isSigned?: boolean);
     }
 
     class APFloat {
@@ -417,7 +417,7 @@ declare namespace llvm {
 
     class StructType extends Type {
         public static create(context: LLVMContext, name: string): StructType;
-        public static create(context: LLVMContext, elementTypes: Type[], name: string): StructType;
+        public static create(context: LLVMContext, elementTypes: Type[], name: string, isPacked?: boolean): StructType;
 
         public static get(context: LLVMContext): StructType;
         public static get(context: LLVMContext, elementTypes: Type[]): StructType;
@@ -812,6 +812,10 @@ declare namespace llvm {
 
         // duplicated
         public getType(): PointerType;
+
+        public getCallingConv(): number;
+
+        public setCallingConv(cc: number): void;
 
         public addFnAttr(kind: number): void;
         public addFnAttr(attr: Attribute): void;
@@ -2246,6 +2250,10 @@ declare namespace llvm {
 
     class Target {
         public createTargetMachine(targetTriple: string, cpu: string, features?: string): TargetMachine;
+        public createTargetMachine(targetTriple: string, cpu: string, features: string, reloc: number): TargetMachine;
+        public createTargetMachine(targetTriple: string, cpu: string, features: string, reloc: number, codeModel: number): TargetMachine;
+        public createTargetMachine(targetTriple: string, cpu: string, features: string, reloc: number, codeModel: number, optLevel: number): TargetMachine;
+        public createTargetMachine(targetTriple: string, cpu: string, features: string, reloc: number, codeModel: number, optLevel: number, jit: boolean): TargetMachine;
 
         public getName(): string;
 
@@ -2267,7 +2275,138 @@ declare namespace llvm {
     class TargetMachine {
         public createDataLayout(): DataLayout;
 
+        public emitToFile(module: Module, filePath: string, fileType: number): void;
+
+        public emitToBuffer(module: Module, fileType: number): Buffer;
+
         protected constructor();
+    }
+
+    namespace CallingConv {
+        const C: number;
+        const Fast: number;
+        const Cold: number;
+        const GHC: number;
+        const HiPE: number;
+        const AnyReg: number;
+        const PreserveMost: number;
+        const PreserveAll: number;
+        const Swift: number;
+        const CXX_FAST_TLS: number;
+        const Tail: number;
+        const CFGuard_Check: number;
+        const SwiftTail: number;
+        const FirstTargetCC: number;
+        const X86_StdCall: number;
+        const X86_FastCall: number;
+        const ARM_APCS: number;
+        const ARM_AAPCS: number;
+        const ARM_AAPCS_VFP: number;
+        const MSP430_INTR: number;
+        const X86_ThisCall: number;
+        const PTX_Kernel: number;
+        const PTX_Device: number;
+        const SPIR_FUNC: number;
+        const SPIR_KERNEL: number;
+        const Intel_OCL_BI: number;
+        const X86_64_SysV: number;
+        const Win64: number;
+        const X86_VectorCall: number;
+        const HHVM: number;
+        const HHVM_C: number;
+        const X86_INTR: number;
+        const AVR_INTR: number;
+        const AVR_SIGNAL: number;
+        const AVR_BUILTIN: number;
+        const AMDGPU_VS: number;
+        const AMDGPU_GS: number;
+        const AMDGPU_PS: number;
+        const AMDGPU_CS: number;
+        const AMDGPU_KERNEL: number;
+        const X86_RegCall: number;
+        const AMDGPU_HS: number;
+        const MSP430_BUILTIN: number;
+        const AMDGPU_LS: number;
+        const AMDGPU_ES: number;
+        const AArch64_VectorCall: number;
+        const AArch64_SVE_VectorCall: number;
+        const WASM_EmscriptenInvoke: number;
+        const AMDGPU_Gfx: number;
+        const M68k_INTR: number;
+        const MaxID: number;
+    }
+
+    namespace Reloc {
+        const Static: number;
+        const PIC_: number;
+        const DynamicNoPIC: number;
+        const ROPI: number;
+        const RWPI: number;
+        const ROPI_RWPI: number;
+    }
+
+    namespace CodeModel {
+        const Tiny: number;
+        const Small: number;
+        const Kernel: number;
+        const Medium: number;
+        const Large: number;
+    }
+
+    namespace CodeGenOpt {
+        const None: number;
+        const Less: number;
+        const Default: number;
+        const Aggressive: number;
+    }
+
+    namespace CodeGenFileType {
+        const Assembly: number;
+        const Object: number;
+        const Null: number;
+    }
+
+    namespace OptimizationLevel {
+        const O0: number;
+        const O1: number;
+        const O2: number;
+        const O3: number;
+        const Os: number;
+        const Oz: number;
+    }
+
+    namespace ThinOrFullLTOPhase {
+        const None: number;
+        const ThinLTOPreLink: number;
+        const ThinLTOPostLink: number;
+        const FullLTOPreLink: number;
+        const FullLTOPostLink: number;
+    }
+
+    class FunctionPassManager {
+        public addSROAPass(): void;
+
+        public addEarlyCSEPass(useSSA?: boolean): void;
+
+        public addInstCombinePass(): void;
+
+        public isEmpty(): boolean;
+
+        protected constructor();
+    }
+
+    class ModulePassManager {
+        public constructor(optLevel?: number);
+
+        public createFunctionPassManager(ltoPhase?: number): FunctionPassManager;
+
+        public addFunctionPasses(fpm: FunctionPassManager): void;
+
+        public addVerifierPass(): void;
+
+        public isEmpty(): boolean;
+
+        public run(module: Module): void;
     }
 
     function InitializeAllTargetInfos(): void;

@@ -115,4 +115,7 @@ void InitIR(Napi::Env env, Napi::Object &exports) {
     DataLayout::Init(env, exports);
     Verifier::Init(env, exports);
     Intrinsic::Init(env, exports);
+    CallingConv::Init(env, exports);
+    FunctionPassManager::Init(env, exports);
+    ModulePassManager::Init(env, exports);
 }
