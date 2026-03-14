@@ -1,3 +1,4 @@
+# [9.1.0](https://github.com/DesignLiquido/llvm-bindings/compare/v9.0.0...v9.1.0) (2026-03-14)
 # Changelog
 
 ## [9.1.0](https://github.com/DesignLiquido/llvm-bindings/compare/v9.0.0...v9.1.0) (2026-03-12)
