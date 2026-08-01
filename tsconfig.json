@@ -3,11 +3,11 @@
         "index.ts"
     ],
     "compilerOptions": {
-        "target": "ES5",
+        "target": "ES2020",
         "module": "commonjs",
         "outDir": "dist",
         "strict": true,
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "types": ["node", "jest"],
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
