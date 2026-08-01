@@ -18,14 +18,14 @@ describe('Test Module', () => {
 
         test('Test Without Enough Arguments', () => {
             const ModuleCtor = llvm.Module as any;
-            expect(() => new ModuleCtor()).toThrowError(constructorErrMsg);
-            expect(() => new ModuleCtor(FileName)).toThrowError(constructorErrMsg);
+            expect(() => new ModuleCtor()).toThrow(constructorErrMsg);
+            expect(() => new ModuleCtor(FileName)).toThrow(constructorErrMsg);
         });
 
         test('Test With Arguments Not Matching The Expected Type', () => {
             const ModuleCtor = llvm.Module as any;
-            expect(() => new ModuleCtor(1, new llvm.LLVMContext())).toThrowError(constructorErrMsg);
-            expect(() => new ModuleCtor(FileName, {})).toThrowError(constructorErrMsg);
+            expect(() => new ModuleCtor(1, new llvm.LLVMContext())).toThrow(constructorErrMsg);
+            expect(() => new ModuleCtor(FileName, {})).toThrow(constructorErrMsg);
         });
     });
 
@@ -46,7 +46,7 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const setModuleIdentifier = module.setModuleIdentifier.bind(module) as any;
                 setModuleIdentifier();
-            }).toThrowError(setMoudleIDErrMsg);
+            }).toThrow(setMoudleIDErrMsg);
         });
 
         test('Test With Arguments Not Matching The Expected Type', () => {
@@ -55,7 +55,7 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const setModuleIdentifier = module.setModuleIdentifier.bind(module) as any;
                 setModuleIdentifier(1);
-            }).toThrowError(setMoudleIDErrMsg);
+            }).toThrow(setMoudleIDErrMsg);
         });
     });
 
@@ -76,7 +76,7 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const setSourceFileName = module.setSourceFileName.bind(module) as any;
                 setSourceFileName();
-            }).toThrowError(setSourceFileNameErrMsg);
+            }).toThrow(setSourceFileNameErrMsg);
         });
 
         test('Test With Arguments Not Matching The Expected Type', () => {
@@ -85,7 +85,7 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const setSourceFileName = module.setSourceFileName.bind(module) as any;
                 setSourceFileName(1);
-            }).toThrowError(setSourceFileNameErrMsg);
+            }).toThrow(setSourceFileNameErrMsg);
         });
     });
 
@@ -116,7 +116,7 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const setDataLayout = module.setDataLayout.bind(module) as any;
                 setDataLayout();
-            }).toThrowError(setDataLayoutErrMsg);
+            }).toThrow(setDataLayoutErrMsg);
         });
 
         test('Test With Arguments Not Matching The Expected Type', () => {
@@ -125,7 +125,7 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const setDataLayout = module.setDataLayout.bind(module) as any;
                 setDataLayout(1);
-            }).toThrowError(setDataLayoutErrMsg);
+            }).toThrow(setDataLayoutErrMsg);
         });
     });
 
@@ -147,7 +147,7 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const setTargetTriple = module.setTargetTriple.bind(module) as any;
                 setTargetTriple();
-            }).toThrowError(setTargetTripleErrMsg);
+            }).toThrow(setTargetTripleErrMsg);
         });
 
         test('Test With Arguments Not Matching The Expected Type', () => {
@@ -156,7 +156,7 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const setTargetTriple = module.setTargetTriple.bind(module) as any;
                 setTargetTriple(1);
-            }).toThrowError(setTargetTripleErrMsg);
+            }).toThrow(setTargetTripleErrMsg);
         });
     });
 
@@ -192,8 +192,8 @@ describe('Test Module', () => {
             const context = new llvm.LLVMContext();
             const module = new llvm.Module(FileName, context);
             const getOrInsertFunction = module.getOrInsertFunction.bind(module) as any;
-            expect(() => getOrInsertFunction()).toThrowError(getOrInsertFunctionErrMsg);
-            expect(() => getOrInsertFunction('func')).toThrowError(getOrInsertFunctionErrMsg);
+            expect(() => getOrInsertFunction()).toThrow(getOrInsertFunctionErrMsg);
+            expect(() => getOrInsertFunction('func')).toThrow(getOrInsertFunctionErrMsg);
         });
 
         test('Test With Arguments Not Matching The Expected Type', () => {
@@ -201,9 +201,9 @@ describe('Test Module', () => {
             const module = new llvm.Module(FileName, context);
             const funcType = llvm.FunctionType.get(llvm.Type.getVoidTy(context), false);
             const getOrInsertFunction = module.getOrInsertFunction.bind(module) as any;
-            expect(() => getOrInsertFunction(1, funcType)).toThrowError(getOrInsertFunctionErrMsg);
-            expect(() => getOrInsertFunction('func', 1)).toThrowError(getOrInsertFunctionErrMsg);
-            expect(() => getOrInsertFunction(1, 1)).toThrowError(getOrInsertFunctionErrMsg);
+            expect(() => getOrInsertFunction(1, funcType)).toThrow(getOrInsertFunctionErrMsg);
+            expect(() => getOrInsertFunction('func', 1)).toThrow(getOrInsertFunctionErrMsg);
+            expect(() => getOrInsertFunction(1, 1)).toThrow(getOrInsertFunctionErrMsg);
         });
     });
 
@@ -230,7 +230,7 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const getFunction = module.getFunction.bind(module) as any;
                 getFunction();
-            }).toThrowError(getFunctionErrMsg);
+            }).toThrow(getFunctionErrMsg);
         });
 
         test('Test With Arguments Not Matching The Expected Type', () => {
@@ -239,7 +239,7 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const getFunction = module.getFunction.bind(module) as any;
                 getFunction(1);
-            }).toThrowError(getFunctionErrMsg);
+            }).toThrow(getFunctionErrMsg);
         });
     });
 
@@ -267,7 +267,7 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const getGlobalVariable = module.getGlobalVariable.bind(module) as any;
                 getGlobalVariable();
-            }).toThrowError(getGlobalVariableErrMsg);
+            }).toThrow(getGlobalVariableErrMsg);
         });
 
         test('Test With Arguments Not Matching The Expected Type', () => {
@@ -276,7 +276,7 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const getGlobalVariable = module.getGlobalVariable.bind(module) as any;
                 getGlobalVariable(1);
-            }).toThrowError(getGlobalVariableErrMsg);
+            }).toThrow(getGlobalVariableErrMsg);
         });
     });
 
@@ -296,19 +296,19 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const addModuleFlag = module.addModuleFlag.bind(module) as any;
                 addModuleFlag();
-            }).toThrowError(addModuleFlagErrMsg);
+            }).toThrow(addModuleFlagErrMsg);
             expect(() => {
                 const context = new llvm.LLVMContext();
                 const module = new llvm.Module(FileName, context);
                 const addModuleFlag = module.addModuleFlag.bind(module) as any;
                 addModuleFlag(llvm.Module.ModFlagBehavior.Require);
-            }).toThrowError(addModuleFlagErrMsg);
+            }).toThrow(addModuleFlagErrMsg);
             expect(() => {
                 const context = new llvm.LLVMContext();
                 const module = new llvm.Module(FileName, context);
                 const addModuleFlag = module.addModuleFlag.bind(module) as any;
                 addModuleFlag(llvm.Module.ModFlagBehavior.Require, 'name');
-            }).toThrowError(addModuleFlagErrMsg);
+            }).toThrow(addModuleFlagErrMsg);
         });
 
         test('Test With Arguments Not Matching The Expected Type', () => {
@@ -317,19 +317,19 @@ describe('Test Module', () => {
                 const module = new llvm.Module(FileName, context);
                 const addModuleFlag = module.addModuleFlag.bind(module) as any;
                 addModuleFlag('param1', 'name', 1);
-            }).toThrowError(addModuleFlagErrMsg);
+            }).toThrow(addModuleFlagErrMsg);
             expect(() => {
                 const context = new llvm.LLVMContext();
                 const module = new llvm.Module(FileName, context);
                 const addModuleFlag = module.addModuleFlag.bind(module) as any;
                 addModuleFlag(llvm.Module.ModFlagBehavior.Require, 2, 1);
-            }).toThrowError(addModuleFlagErrMsg);
+            }).toThrow(addModuleFlagErrMsg);
             expect(() => {
                 const context = new llvm.LLVMContext();
                 const module = new llvm.Module(FileName, context);
                 const addModuleFlag = module.addModuleFlag.bind(module) as any;
                 addModuleFlag(llvm.Module.ModFlagBehavior.Require, 'name', 'param3');
-            }).toThrowError(addModuleFlagErrMsg);
+            }).toThrow(addModuleFlagErrMsg);
         });
     });
 
