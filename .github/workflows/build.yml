@@ -15,8 +15,8 @@ on:
       - 'LICENSE'
 
 env:
-  LLVM_VERSION: 22.1.1
-  LLVM_VERSION_MAJOR: 22
+  LLVM_VERSION: 23.1.6
+  LLVM_VERSION_MAJOR: 23
 
 jobs:
   build-push:
@@ -119,7 +119,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ macos-15, macos-15-intel, macos-26, ubuntu-22.04, ubuntu-24.04, windows-2022 ]
+        # macos-15-intel removed: Homebrew no longer ships Intel macOS bottles, so
+        # `brew install llvm` builds LLVM from source and exceeds the job time limit.
+        os: [ macos-15, macos-26, ubuntu-22.04, ubuntu-24.04, windows-2022 ]
         node: [ 18, 20, 22 ]
     steps:
       - name: Fetch Codebase

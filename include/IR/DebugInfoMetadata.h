@@ -9,18 +9,18 @@ public:
 
     static void Init(Napi::Env env, Napi::Object &exports);
 
-    static Napi::Value New(Napi::Env env, llvm::DITypeRefArray *array);
+    static Napi::Value New(Napi::Env env, llvm::DITypeArray *array);
 
     static bool IsClassOf(const Napi::Value &value);
 
-    static llvm::DITypeRefArray *Extract(const Napi::Value &value);
+    static llvm::DITypeArray *Extract(const Napi::Value &value);
 
     explicit DITypeRefArray(const Napi::CallbackInfo &info);
 
-    llvm::DITypeRefArray *getLLVMPrimitive();
+    llvm::DITypeArray *getLLVMPrimitive();
 
 private:
-    llvm::DITypeRefArray *array = nullptr;
+    llvm::DITypeArray *array = nullptr;
 };
 
 class DINode : public Napi::ObjectWrap<DINode> {

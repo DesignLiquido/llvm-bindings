@@ -10,13 +10,15 @@ LLVM bindings for Node.js/JavaScript/TypeScript. This project is a hard fork of 
 
 |                    | x86_64 | ARM64 |
 |:------------------:|:------:|:-----:|
-| macOS 15 Sequoia   |   ✅   |   ✅  |
+| macOS 15 Sequoia   |  ⚠️¹  |   ✅  |
 |     macOS 26       |   /    |   ✅  |
 |   Ubuntu 22.04     |   ✅   |   /   |
 |   Ubuntu 24.04     |   ✅   |   /   |
 | Windows Server 2022|   ✅   |  ⚠️  |
 
 > ⚠️ means not tested.
+>
+> ¹ Not tested in CI since v10.0.0: Homebrew no longer provides prebuilt LLVM for Intel macOS, so `brew install llvm@23` builds LLVM from source (several hours).
 
 ## Supported LLVM methods
 
@@ -28,7 +30,7 @@ listed in the [TypeScript definition file](./llvm-bindings.d.ts).
 
 ```shell
 # install cmake and llvm by homebrew
-brew install cmake llvm@22
+brew install cmake llvm@23
 
 # install llvm-bindings by yarn
 yarn add llvm-bindings
@@ -40,7 +42,7 @@ yarn add llvm-bindings
 #install llvm by installation script
 wget https://apt.llvm.org/llvm.sh
 sudo chmod +x llvm.sh
-sudo ./llvm.sh 22
+sudo ./llvm.sh 23
 
 # install cmake and zlib by apt-get
 sudo apt-get install cmake zlib1g-dev
@@ -51,9 +53,9 @@ yarn add llvm-bindings
 
 ### Install on Windows
 
-First, please refer to [Build LLVM from sources on Windows 10](https://github.com/ApsarasX/llvm-bindings/wiki/Build-LLVM-from-source-code-on-Windows-10) to build LLVM. An alternative is to download a prebuilt LLVM 22 binary for Windows.
+First, please refer to [Build LLVM from sources on Windows 10](https://github.com/ApsarasX/llvm-bindings/wiki/Build-LLVM-from-source-code-on-Windows-10) to build LLVM. An alternative is to download a prebuilt LLVM 23 binary for Windows.
 
-Then, find the `llvm-config` command in your LLVM build directory and execute `llvm-config --cmakedir` to get LLVM cmake directory, assuming `C:\Users\dev\LLVM-22.x.x-win64\lib\cmake\llvm`.
+Then, find the `llvm-config` command in your LLVM build directory and execute `llvm-config --cmakedir` to get LLVM cmake directory, assuming `C:\Users\dev\LLVM-23.x.x-win64\lib\cmake\llvm`.
 
 Finally, execute the following commands.
 
@@ -61,7 +63,7 @@ Finally, execute the following commands.
 # specify the LLVM cmake directory for cmake-js
 # note: cmake-js reads npm-style config keys
 # on Windows PowerShell, prefer env var over npm config set
-$env:npm_config_cmake_LLVM_DIR = "C:\Users\dev\LLVM-22.x.x-win64\lib\cmake\llvm"
+$env:npm_config_cmake_LLVM_DIR = "C:\Users\dev\LLVM-23.x.x-win64\lib\cmake\llvm"
 
 # install llvm-bindings by yarn
 yarn add llvm-bindings
@@ -346,6 +348,29 @@ console.log(packed.isPacked()); // true
 const big = new llvm.APInt(64, 9007199254740993n); // value > Number.MAX_SAFE_INTEGER
 ```
 
+## LLVM 23 / v10.0.x
+
+LLVM 23 removes a few APIs this library wrapped and bumps the minimum supported version.
+
+**At a glance**
+
+- Minimum required LLVM version is now 23; older LLVM versions are no longer supported.
+- `Intrinsic.convert_from_fp16` and `Intrinsic.convert_to_fp16` were removed (LLVM 23 dropped these intrinsics).
+- `OptimizationLevel.Os` and `OptimizationLevel.Oz` remain available but now build the O2 pipeline. LLVM 23 removed the `Os`/`Oz` pipeline levels; size optimization is now controlled by the `optsize` / `minsize` function attributes.
+
+**Migration notes**
+
+- Replace `llvm.convert_from_fp16` / `llvm.convert_to_fp16` calls with `fpext` / `fptrunc` from/to `half` (`IRBuilder.CreateFPExt` / `CreateFPTrunc` with `Type.getHalfTy`).
+- For size-optimized code, keep using `OptimizationLevel.Os` / `Oz` and add `Attribute.AttrKind.OptimizeForSize` / `MinSize` to the relevant functions.
+
+**Internal changes (no JS/TS impact)**
+
+- `DITypeRefArray` now wraps `llvm::DITypeArray` (LLVM 23 renamed the type). The JavaScript class name is unchanged.
+- `IRBuilder.CreateGlobalStringPtr` now calls `IRBuilder::CreateGlobalString` (LLVM 23 removed `CreateGlobalStringPtr`; with opaque pointers both return the same pointer value).
+- `ConstantPointerNull.getType` uses `getPointerType()`, as `getType()` now returns `Type *`.
+- `TargetRegistry.lookupTarget` wraps the triple string in `llvm::Triple`, as the string overload was removed.
+- `cmake/LLVM.cmake`: the version discovery loop and the minimum-version guard now enforce LLVM >= 23.
+
 ## Compatibility
 
 | llvm-bindings versions                     | compatible LLVM versions |
@@ -364,6 +389,7 @@ const big = new llvm.APInt(64, 9007199254740993n); // value > Number.MAX_SAFE_IN
 | (@designliquido/llvm-bindings) 8.0.x       | 21.1.x                   |
 | (@designliquido/llvm-bindings) 9.0.x       | 22.1.x                   |
 | (@designliquido/llvm-bindings) 9.1.x       | 22.1.x                   |
+| (@designliquido/llvm-bindings) 10.0.x      | 23.1.x                   |
 
 ## Acknowledgments
 

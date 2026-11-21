@@ -43,8 +43,6 @@ void Intrinsic::Init(Napi::Env env, Napi::Object &exports) {
     intrinsicNS.Set("ceil", Napi::Number::New(env, llvm::Intrinsic::ceil));
     intrinsicNS.Set("clear_cache", Napi::Number::New(env, llvm::Intrinsic::clear_cache));
     intrinsicNS.Set("codeview_annotation", Napi::Number::New(env, llvm::Intrinsic::codeview_annotation));
-    intrinsicNS.Set("convert_from_fp16", Napi::Number::New(env, llvm::Intrinsic::convert_from_fp16));
-    intrinsicNS.Set("convert_to_fp16", Napi::Number::New(env, llvm::Intrinsic::convert_to_fp16));
     intrinsicNS.Set("copysign", Napi::Number::New(env, llvm::Intrinsic::copysign));
     intrinsicNS.Set("coro_align", Napi::Number::New(env, llvm::Intrinsic::coro_align));
     intrinsicNS.Set("coro_alloc", Napi::Number::New(env, llvm::Intrinsic::coro_alloc));

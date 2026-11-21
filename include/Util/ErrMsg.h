@@ -469,7 +469,7 @@ namespace ErrMsg {
                                                 "\n\t - new ()";
         }
         namespace DITypeRefArray {
-            constexpr const char *constructor = "DITypeRefArray.constructor needs to be called with new (external: Napi::External<llvm::DITypeRefArray>)";
+            constexpr const char *constructor = "DITypeRefArray.constructor needs to be called with new (external: Napi::External<llvm::DITypeArray>)";
         }
         namespace DINode {
             constexpr const char *constructor = "DINode.constructor needs to be called with new (external: Napi::External<llvm::DINode>)";

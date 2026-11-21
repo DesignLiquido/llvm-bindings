@@ -14,15 +14,15 @@ void DITypeRefArray::Init(Napi::Env env, Napi::Object &exports) {
     exports.Set("DITypeRefArray", func);
 }
 
-Napi::Value DITypeRefArray::New(Napi::Env env, llvm::DITypeRefArray *array) {
-    return constructor.New({Napi::External<llvm::DITypeRefArray>::New(env, array)});
+Napi::Value DITypeRefArray::New(Napi::Env env, llvm::DITypeArray *array) {
+    return constructor.New({Napi::External<llvm::DITypeArray>::New(env, array)});
 }
 
 bool DITypeRefArray::IsClassOf(const Napi::Value &value) {
     return value.IsNull() || value.As<Napi::Object>().InstanceOf(constructor.Value());
 }
 
-llvm::DITypeRefArray *DITypeRefArray::Extract(const Napi::Value &value) {
+llvm::DITypeArray *DITypeRefArray::Extract(const Napi::Value &value) {
     if (value.IsNull()) {
         return nullptr;
     }
@@ -34,11 +34,11 @@ DITypeRefArray::DITypeRefArray(const Napi::CallbackInfo &info) : ObjectWrap(info
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::DITypeRefArray::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::DITypeRefArray>>();
+    auto external = info[0].As<Napi::External<llvm::DITypeArray>>();
     array = external.Data();
 }
 
-llvm::DITypeRefArray *DITypeRefArray::getLLVMPrimitive() {
+llvm::DITypeArray *DITypeRefArray::getLLVMPrimitive() {
     return array;
 }
 

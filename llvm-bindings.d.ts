@@ -1946,8 +1946,6 @@ declare namespace llvm {
         const ceil: number;
         const clear_cache: number;
         const codeview_annotation: number;
-        const convert_from_fp16: number;
-        const convert_to_fp16: number;
         const copysign: number;
         const coro_align: number;
         const coro_alloc: number;
@@ -2371,7 +2369,9 @@ declare namespace llvm {
         const O1: number;
         const O2: number;
         const O3: number;
+        /** Since LLVM 23, runs the O2 pipeline. Add the `optsize` attribute to functions for size optimization. */
         const Os: number;
+        /** Since LLVM 23, runs the O2 pipeline. Add the `minsize` attribute to functions for size optimization. */
         const Oz: number;
     }
 
