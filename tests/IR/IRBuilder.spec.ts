@@ -28,6 +28,44 @@ function makeI32UnOpSetup() {
 }
 
 describe('IRBuilder', () => {
+    describe('Insertion points', () => {
+        test('saveIP/restoreIP returns to the saved position without throwing', () => {
+            const { context, theModule, builder, fn, a, b } = makeI32BinOpSetup();
+            const otherBB = llvm.BasicBlock.Create(context, 'other', fn);
+
+            const ip = builder.saveIP();
+            builder.SetInsertPoint(otherBB);
+            builder.CreateUnreachable();
+            expect(() => builder.restoreIP(ip)).not.toThrow();
+
+            builder.CreateRet(builder.CreateAdd(a, b, 'sum'));
+            expect(fn.getEntryBlock().getTerminator()).not.toBeNull();
+            expect(llvm.verifyModule(theModule)).toBe(false);
+            expect(theModule.print()).toMatch(/entry:\s+%sum = add i32 %0, %1\s+ret i32 %sum/);
+        });
+
+        test('saveAndClearIP clears the insertion point', () => {
+            const { builder } = makeI32BinOpSetup();
+            const ip = builder.saveAndClearIP();
+            expect(builder.GetInsertBlock()).toBeNull();
+            builder.restoreIP(ip);
+            expect(builder.GetInsertBlock()).not.toBeNull();
+        });
+    });
+
+    describe('Instruction.user_back', () => {
+        test('returns the first user, or null when there is none', () => {
+            const { theModule, builder, a, b } = makeI32BinOpSetup();
+            const sum = builder.CreateAdd(a, b, 'sum') as llvm.Instruction;
+            expect(sum.user_back()).toBeNull();
+            const ret = builder.CreateRet(sum);
+            expect(sum.user_back()).toBeInstanceOf(llvm.Instruction);
+            expect(sum.use_back()).toBeInstanceOf(llvm.Instruction);
+            expect(ret).toBeInstanceOf(llvm.ReturnInst);
+            expect(llvm.verifyModule(theModule)).toBe(false);
+        });
+    });
+
     describe('NSW/NUW arithmetic', () => {
         test('CreateNSWAdd produces a valid Value', () => {
             const { builder, fn, a, b } = makeI32BinOpSetup();

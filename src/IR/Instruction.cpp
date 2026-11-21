@@ -4,6 +4,8 @@
 void Instruction::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
     Napi::Function func = DefineClass(env, "Instruction", {
+            InstanceMethod("user_back", &Instruction::userBack),
+            // kept for backward compatibility: earlier versions exported this misspelled name
             InstanceMethod("use_back", &Instruction::userBack),
             InstanceMethod("getParent", &Instruction::getParent),
             InstanceMethod("getModule", &Instruction::getModule),
@@ -140,7 +142,11 @@ llvm::Instruction *Instruction::getLLVMPrimitive() {
 
 Napi::Value Instruction::userBack(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    llvm::Instruction *userInst = inst->user_back();
+    // user_back() dereferences the use list, so it is only valid when there are users.
+    if (inst->user_empty()) {
+        return env.Null();
+    }
+    llvm::Instruction *userInst = llvm::dyn_cast<llvm::Instruction>(inst->user_back());
     if (userInst) {
         return Instruction::New(env, userInst);
     }
