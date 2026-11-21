@@ -71,15 +71,18 @@ Napi::Value FunctionPassManager::isEmpty(const Napi::CallbackInfo &info) {
 //                        ModulePassManager Class
 //===----------------------------------------------------------------------===//
 
-// Maps our numeric OptimizationLevel values (0-5) to llvm::OptimizationLevel
+// Maps our numeric OptimizationLevel values (0-5) to llvm::OptimizationLevel.
+// LLVM 23 removed OptimizationLevel::Os and ::Oz; size optimization is now driven
+// by the `optsize` / `minsize` function attributes. Os and Oz map to the O2 pipeline,
+// which is what both used as their speed level.
 static llvm::OptimizationLevel toOptimizationLevel(unsigned level) {
     switch (level) {
         case 0: return llvm::OptimizationLevel::O0;
         case 1: return llvm::OptimizationLevel::O1;
         case 2: return llvm::OptimizationLevel::O2;
         case 3: return llvm::OptimizationLevel::O3;
-        case 4: return llvm::OptimizationLevel::Os;
-        case 5: return llvm::OptimizationLevel::Oz;
+        case 4: return llvm::OptimizationLevel::O2;
+        case 5: return llvm::OptimizationLevel::O2;
         default: return llvm::OptimizationLevel::O0;
     }
 }

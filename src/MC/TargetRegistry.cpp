@@ -101,7 +101,7 @@ static Napi::Value lookupTarget(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && info[0].IsString()) {
         std::string triple = info[0].As<Napi::String>();
         std::string error;
-        const llvm::Target *result = llvm::TargetRegistry::lookupTarget(triple, error);
+        const llvm::Target *result = llvm::TargetRegistry::lookupTarget(llvm::Triple(triple), error);
         if (result) {
             return Target::New(env, const_cast<llvm::Target *>(result));
         } else {
