@@ -97,7 +97,7 @@ Napi::Value BasicBlock::getModule(const Napi::CallbackInfo &info) {
 
 Napi::Value BasicBlock::getTerminator(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    llvm::Instruction *termInst = basicBlock->getTerminator();
+    llvm::Instruction *termInst = basicBlock->getTerminatorOrNull();
     if (termInst) {
         return Instruction::New(env, termInst);
     }
