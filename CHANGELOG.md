@@ -1,3 +1,9 @@
+## [10.0.1](https://github.com/DesignLiquido/llvm-bindings/compare/v10.0.0...v10.0.1) (2026-11-21)
+
+
+### Bug Fixes
+
+* conversões de ponto flutuante e getTerminator no LLVM 23 ([#68](https://github.com/DesignLiquido/llvm-bindings/issues/68)) ([7038bd1](https://github.com/DesignLiquido/llvm-bindings/commit/7038bd11c784a00511f5ad20216441a64b59e3d4))
 # [10.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v9.1.0...v10.0.0) (2026-11-21)
 # [9.1.0](https://github.com/DesignLiquido/llvm-bindings/compare/v9.0.0...v9.1.0) (2026-03-14)
 # Changelog
