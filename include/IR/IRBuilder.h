@@ -274,6 +274,15 @@ private:
             result = std::invoke(method, builder, value, destType, name, false);
         } else if constexpr (std::is_invocable_v<M, B, llvm::Value *, llvm::Type *, const llvm::Twine &, bool, bool>) {
             result = std::invoke(method, builder, value, destType, name, false, false);
+        } else if constexpr (std::is_invocable_v<M, B, llvm::Value *, llvm::Type *, const llvm::Twine &, llvm::MDNode *>) {
+            // CreateSIToFP, CreateFPTrunc, CreateFPExt: (V, DestTy, Name, MDNode *FPMathTag)
+            result = std::invoke(method, builder, value, destType, name, nullptr);
+        } else if constexpr (std::is_invocable_v<M, B, llvm::Value *, llvm::Type *, const llvm::Twine &, bool, llvm::MDNode *>) {
+            // CreateUIToFP: (V, DestTy, Name, bool IsNonNeg, MDNode *FPMathTag)
+            result = std::invoke(method, builder, value, destType, name, false, nullptr);
+        } else {
+            // Uma assinatura nova não pode cair aqui em silêncio: `result` ficaria sem valor.
+            static_assert(sizeof(M) == 0, "CreateCastFactory: assinatura de conversão não suportada");
         }
         return Value::New(env, result);
     }
