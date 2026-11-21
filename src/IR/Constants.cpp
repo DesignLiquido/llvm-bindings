@@ -479,7 +479,7 @@ Napi::Value ConstantPointerNull::get(const Napi::CallbackInfo &info) {
 
 Napi::Value ConstantPointerNull::getType(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    llvm::PointerType *type = constantPointerNull->getType();
+    llvm::PointerType *type = constantPointerNull->getPointerType();
     return PointerType::New(env, type);
 }
 

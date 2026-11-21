@@ -166,8 +166,8 @@ Napi::Value DIBuilder::getOrCreateTypeArray(const Napi::CallbackInfo &info) {
         for (unsigned i = 0; i < numElements; ++i) {
             elements[i] = Metadata::Extract(elementArray.Get(i));
         }
-        llvm::DITypeRefArray typeRefArray = builder->getOrCreateTypeArray(elements);
-        return DITypeRefArray::New(env, new llvm::DITypeRefArray(typeRefArray.get()));
+        llvm::DITypeArray typeRefArray = builder->getOrCreateTypeArray(elements);
+        return DITypeRefArray::New(env, new llvm::DITypeArray(typeRefArray.get()));
     }
     throw Napi::TypeError::New(env, ErrMsg::Class::DIBuilder::getOrCreateTypeArray);
 }
@@ -175,7 +175,7 @@ Napi::Value DIBuilder::getOrCreateTypeArray(const Napi::CallbackInfo &info) {
 Napi::Value DIBuilder::createSubroutineType(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
     if (info.Length() == 1 && DITypeRefArray::IsClassOf(info[0])) {
-        llvm::DITypeRefArray *paramTypes = DITypeRefArray::Extract(info[0]);
+        llvm::DITypeArray *paramTypes = DITypeRefArray::Extract(info[0]);
         llvm::DISubroutineType *type = builder->createSubroutineType(*paramTypes);
         return DISubroutineType::New(env, type);
     }

@@ -1,6 +1,30 @@
 # [9.1.0](https://github.com/DesignLiquido/llvm-bindings/compare/v9.0.0...v9.1.0) (2026-03-14)
 # Changelog
 
+## [10.0.0](https://github.com/DesignLiquido/llvm-bindings/compare/v9.1.0...v10.0.0) (2026-11-20)
+
+### At a glance
+
+- LLVM 23 compatibility release.
+- Minimum supported LLVM version raised to 23.
+- Removes `Intrinsic.convert_from_fp16` and `Intrinsic.convert_to_fp16`, which LLVM 23 dropped.
+- `OptimizationLevel.Os` / `Oz` now build the O2 pipeline, as LLVM 23 removed those pipeline levels.
+
+### Breaking changes
+
+- Removed `Intrinsic.convert_from_fp16` and `Intrinsic.convert_to_fp16` from the runtime and from `llvm-bindings.d.ts`. Use `fpext` / `fptrunc` from/to `half` instead.
+- `OptimizationLevel.Os` and `OptimizationLevel.Oz` now map to `llvm::OptimizationLevel::O2`. LLVM 23 controls size optimization through the `optsize` / `minsize` function attributes (`Attribute.AttrKind.OptimizeForSize` / `MinSize`).
+- LLVM 22 and older are no longer supported.
+
+### Changed
+
+- `DITypeRefArray` now wraps `llvm::DITypeArray` (renamed in LLVM 23). The JavaScript/TypeScript class name is unchanged.
+- `IRBuilder.CreateGlobalStringPtr` now calls `IRBuilder::CreateGlobalString`, as LLVM 23 removed `CreateGlobalStringPtr`. The JavaScript/TypeScript signature is unchanged.
+- `ConstantPointerNull.getType` now uses `getPointerType()` internally.
+- `TargetRegistry.lookupTarget` now passes an `llvm::Triple` to LLVM, as the string overload was removed.
+- `cmake/LLVM.cmake` version-discovery loop and minimum-version guard updated to require LLVM >= 23.
+- CI now builds against LLVM 23.1.6 (Windows prebuilt from `DesignLiquido/llvm-windows` release `llvmorg-23.1.6`).
+
 ## [9.1.0](https://github.com/DesignLiquido/llvm-bindings/compare/v9.0.0...v9.1.0) (2026-03-12)
 
 ### At a glance

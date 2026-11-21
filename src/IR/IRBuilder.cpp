@@ -679,7 +679,7 @@ Napi::Value IRBuilder::CreateGlobalStringPtr(const Napi::CallbackInfo &info) {
         const std::string &name = argsLen >= 2 ? std::string(info[1].As<Napi::String>()) : "";
         unsigned addrSpace = argsLen >= 3 ? info[2].As<Napi::Number>() : 0;
         llvm::Module *module = argsLen == 4 ? Module::Extract(info[3]) : nullptr;
-        llvm::Constant *globalStrPtr = builder->CreateGlobalStringPtr(str, name, addrSpace, module);
+        llvm::Constant *globalStrPtr = builder->CreateGlobalString(str, name, addrSpace, module);
         return Constant::New(env, globalStrPtr);
     }
     throw Napi::TypeError::New(env, ErrMsg::Class::IRBuilder::CreateGlobalStringPtr);
