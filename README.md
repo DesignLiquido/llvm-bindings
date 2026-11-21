@@ -10,13 +10,15 @@ LLVM bindings for Node.js/JavaScript/TypeScript. This project is a hard fork of 
 
 |                    | x86_64 | ARM64 |
 |:------------------:|:------:|:-----:|
-| macOS 15 Sequoia   |   ✅   |   ✅  |
+| macOS 15 Sequoia   |  ⚠️¹  |   ✅  |
 |     macOS 26       |   /    |   ✅  |
 |   Ubuntu 22.04     |   ✅   |   /   |
 |   Ubuntu 24.04     |   ✅   |   /   |
 | Windows Server 2022|   ✅   |  ⚠️  |
 
 > ⚠️ means not tested.
+>
+> ¹ Not tested in CI since v10.0.0: Homebrew no longer provides prebuilt LLVM for Intel macOS, so `brew install llvm@23` builds LLVM from source (several hours).
 
 ## Supported LLVM methods
 

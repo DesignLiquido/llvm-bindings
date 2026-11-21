@@ -24,6 +24,7 @@
 - `TargetRegistry.lookupTarget` now passes an `llvm::Triple` to LLVM, as the string overload was removed.
 - `cmake/LLVM.cmake` version-discovery loop and minimum-version guard updated to require LLVM >= 23.
 - CI now builds against LLVM 23.1.6 (Windows prebuilt from `DesignLiquido/llvm-windows` release `llvmorg-23.1.6`).
+- Removed `macos-15-intel` from the PR CI matrix: Homebrew no longer ships Intel macOS bottles, so installing LLVM there builds it from source and exceeds the job time limit.
 
 ## [9.1.0](https://github.com/DesignLiquido/llvm-bindings/compare/v9.0.0...v9.1.0) (2026-03-12)
 
