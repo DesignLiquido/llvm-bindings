@@ -25,7 +25,7 @@ Linker::Linker(const Napi::CallbackInfo &info) : ObjectWrap(info) {
 
 Napi::Value Linker::linkInModule(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    if (info.Length() == 2 && Module::IsClassOf(info[0])) {
+    if (info.Length() == 1 && Module::IsClassOf(info[0])) {
         llvm::Module *srcModule = Module::Extract(info[0]);
         bool failed = linker->linkInModule(std::unique_ptr<llvm::Module>(srcModule));
         return Napi::Boolean::New(env, failed);

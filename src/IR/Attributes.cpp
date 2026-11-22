@@ -59,20 +59,28 @@ Napi::Value Attribute::get(const Napi::CallbackInfo &info) {
         llvm::LLVMContext &context = LLVMContext::Extract(info[0]);
         if (info[1].IsNumber()) {
             unsigned rawAttrKind = info[1].As<Napi::Number>();
-            if (rawAttrKind < llvm::Attribute::AttrKind::FirstEnumAttr ||
-                rawAttrKind > llvm::Attribute::AttrKind::LastEnumAttr) {
-                throw Napi::TypeError::New(env, ErrMsg::Class::Attribute::invalidAttrKind);
-            }
             auto attrKind = static_cast<llvm::Attribute::AttrKind>(rawAttrKind);
+            // Enum attributes take no value, int attributes take a number and
+            // type attributes take a Type. Reject any other combination, since
+            // llvm::Attribute::get asserts on it.
             if (argsLen == 2) {
+                if (!llvm::Attribute::isEnumAttrKind(attrKind)) {
+                    throw Napi::TypeError::New(env, ErrMsg::Class::Attribute::invalidAttrKind);
+                }
                 isMatch = true;
                 attribute = llvm::Attribute::get(context, attrKind);
             } else if (argsLen == 3) {
                 if (info[2].IsNumber()) {
+                    if (!llvm::Attribute::isIntAttrKind(attrKind)) {
+                        throw Napi::TypeError::New(env, ErrMsg::Class::Attribute::invalidAttrKind);
+                    }
                     isMatch = true;
                     uint64_t value = info[2].As<Napi::Number>().Int64Value();
                     attribute = llvm::Attribute::get(context, attrKind, value);
                 } else if (Type::IsClassOf(info[2])) {
+                    if (!llvm::Attribute::isTypeAttrKind(attrKind)) {
+                        throw Napi::TypeError::New(env, ErrMsg::Class::Attribute::invalidAttrKind);
+                    }
                     isMatch = true;
                     llvm::Type *type = Type::Extract(info[2]);
                     attribute = llvm::Attribute::get(context, attrKind, type);

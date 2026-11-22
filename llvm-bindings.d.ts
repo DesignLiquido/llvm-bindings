@@ -832,6 +832,9 @@ declare namespace llvm {
     class Instruction extends User {
         public user_back(): Instruction | null;
 
+        /** @deprecated Misspelled alias of user_back(). */
+        public use_back(): Instruction | null;
+
         public getParent(): BasicBlock | null;
 
         public getModule(): Module | null;
@@ -1982,7 +1985,6 @@ declare namespace llvm {
         const ctlz: number;
         const ctpop: number;
         const cttz: number;
-        const dbg_addr: number;
         const dbg_declare: number;
         const dbg_label: number;
         const dbg_value: number;
@@ -2236,7 +2238,8 @@ declare namespace llvm {
         function getDeclaration(module: Module, id: number, types?: Type[]): Function;
     }
 
-    function parseIRFile(filename: string, err: SMDiagnostic, context: LLVMContext): Module;
+    /** Returns null (and prints the diagnostic to stderr) if the file cannot be read or parsed. */
+    function parseIRFile(filename: string, err: SMDiagnostic, context: LLVMContext): Module | null;
 
     class Linker {
         public constructor(module: Module);
