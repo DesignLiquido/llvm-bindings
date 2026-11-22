@@ -1,3 +1,9 @@
+## [10.0.2](https://github.com/DesignLiquido/llvm-bindings/compare/v10.0.1...v10.0.2) (2026-11-22)
+
+
+### Bug Fixes
+
+* restoreIP, Attribute.get, linkInModule, parseIRFile e user_back ([5993fc5](https://github.com/DesignLiquido/llvm-bindings/commit/5993fc5fb58b209193dab6944cafee483d8e257b))
 ## [10.0.1](https://github.com/DesignLiquido/llvm-bindings/compare/v10.0.0...v10.0.1) (2026-11-21)
 
 
